@@ -1,4 +1,6 @@
 import java.awt.EventQueue;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 
 import javax.swing.JFrame;
 
@@ -36,8 +38,17 @@ public class LoginBackground {
 	private void initialize() {
 		frame = new JFrame();
 		frame.setResizable(false);
-		frame.setBounds(100, 100, 1920, 1080);
+		frame.setBounds(5, 5, 100, 200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+		device.setFullScreenWindow(frame);
+		LoginWindow login = new LoginWindow();
+		login.setAlwaysOnTop(true);
+		login.setVisible(true);
+		
+		
+		
+		
 	}
 
 }
