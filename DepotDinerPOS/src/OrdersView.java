@@ -19,7 +19,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import javax.swing.JTabbedPane;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class OrdersView extends JFrame {
@@ -32,6 +38,7 @@ public class OrdersView extends JFrame {
 	private JButton button;
 	private JButton button_1;
 	private JList list;
+	private static final int BREAKFAST_HOUR = 0;
 
 
 	/**
@@ -112,6 +119,24 @@ public class OrdersView extends JFrame {
 		button.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		
 		button_1 = new JButton("CREATE ORDER");
+		button_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Calendar calendar = Calendar.getInstance();
+				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
+					System.out.println("Opening Breakfast Menu!");
+					BreakfastView breakfast = new BreakfastView();
+					breakfast.setVisible(true);
+					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				}
+				else{
+					System.out.println("Opening Dinner Menu!");
+					DinnerView dinner = new DinnerView();
+					dinner.setVisible(true);
+					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				}				
+			}
+		});
 		button_1.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		
 		list = new JList();
