@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -8,18 +7,14 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
 import java.awt.Font;
-
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JList;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -27,7 +22,6 @@ import javax.swing.JTable;
 import javax.swing.border.MatteBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
-
 import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JLayeredPane;
@@ -39,6 +33,11 @@ import com.jgoodies.forms.layout.RowSpec;
 import javax.swing.JDesktopPane;
 import java.awt.SystemColor;
 import javax.swing.UIManager;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Calendar;
+import java.util.Date;
+
 
 
 public class OrdersView extends JFrame {
@@ -61,6 +60,8 @@ public class OrdersView extends JFrame {
 	private JLabel lblNewLabel;
 	private JLabel lblTotal;
 	private JScrollPane scrollPane_1;
+	private JList list;
+	private static final int BREAKFAST_HOUR = 0;
 
 	/**
 	 * Launch the application.
@@ -136,6 +137,7 @@ public class OrdersView extends JFrame {
 		
 		desktopPane_1 = new JDesktopPane();
 		desktopPane_1.setBackground(Color.LIGHT_GRAY);
+
 		GroupLayout gl_panelOrders = new GroupLayout(panelOrders);
 		gl_panelOrders.setHorizontalGroup(
 			gl_panelOrders.createParallelGroup(Alignment.LEADING)
@@ -210,6 +212,25 @@ public class OrdersView extends JFrame {
 		desktopPane_1.setLayout(gl_desktopPane_1);
 		
 		button_1 = new JButton("CREATE ORDER");
+		button_1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				Calendar calendar = Calendar.getInstance();
+				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
+					System.out.println("Opening Breakfast Menu!");
+					BreakfastView breakfast = new BreakfastView();
+					breakfast.setVisible(true);
+					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				}
+				else{
+					System.out.println("Opening Dinner Menu!");
+					DinnerView dinner = new DinnerView();
+					dinner.setVisible(true);
+					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				}				
+			}
+		});
+		
 		button_1.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		btnOrderHistory = new JButton("ORDER HISTORY");
