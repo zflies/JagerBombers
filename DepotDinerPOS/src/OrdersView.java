@@ -1,7 +1,4 @@
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -9,54 +6,23 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JViewport;
 import javax.swing.LayoutStyle.ComponentPlacement;
-
 import java.awt.Font;
-
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JList;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
-import javax.swing.border.MatteBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-
 import java.awt.Color;
-
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JLayeredPane;
-import javax.swing.JSplitPane;
-import javax.swing.ScrollPaneConstants;
-
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-
 import javax.swing.JDesktopPane;
-
-import java.awt.SystemColor;
-
-import javax.swing.UIManager;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Calendar;
-import java.util.Date;
 
 
 public class OrdersView extends JFrame {
@@ -79,7 +45,7 @@ public class OrdersView extends JFrame {
 	private JLabel lblTableNumber;
 	private JScrollPane scrollPaneViewOrder;
 	private JList list;
-	private static final int BREAKFAST_HOUR = 0;
+	private static final int BREAKFAST_HOUR = 11;
 	private JTable tableAllOrders;
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
