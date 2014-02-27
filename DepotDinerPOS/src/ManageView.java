@@ -25,6 +25,7 @@ public class ManageView extends JFrame {
 
 	private JPanel contentPane;
 	private JDialog dialogAddEmployee;
+	private static ManageView frame;
 
 
 	/**
@@ -34,7 +35,7 @@ public class ManageView extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					ManageView frame = new ManageView();
+					frame = new ManageView();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,6 +61,14 @@ public class ManageView extends JFrame {
 		lblEmployee.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
 		JButton btnExit = new JButton("Exit");
+		btnExit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				LoginWindow Login = new LoginWindow();
+				Login.setVisible(true);
+				Login.setExtendedState(JFrame.MAXIMIZED_BOTH);
+			}
+		});
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)

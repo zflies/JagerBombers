@@ -98,6 +98,9 @@ public class LoginWindow extends JFrame {
 				else if(pin.compareTo("3") == 0){
 					//open manager window
 					System.out.println("Opening Manager Window!");
+					ManageView Manage = new ManageView();
+					Manage.setVisible(true);
+					Manage.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
 				else{
 					//error, pin couldn't be matched
