@@ -49,7 +49,7 @@ public class ManageView extends JFrame {
 	 */
 	public ManageView() {
 		setTitle("Steven's Depot Diner");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 887, 544);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -64,6 +64,7 @@ public class ManageView extends JFrame {
 		btnExit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+				dispose();
 				LoginWindow Login = new LoginWindow();
 				Login.setVisible(true);
 				Login.setExtendedState(JFrame.MAXIMIZED_BOTH);
