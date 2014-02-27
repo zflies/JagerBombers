@@ -1,7 +1,9 @@
-EECS 690 Project for Team JagerBombers
+------------------------------------------------------------------------
+EECS 690 Project - Team JagerBombers
+------------------------------------------------------------------------
 
 ------------------------------------------------------------------------
-COMPILING INSTRUCTIONS
+Compiling Instructions
 ------------------------------------------------------------------------
 1. Ensure Eclipse supports Swing/Window Builder
 2. From the Project Explorer Window in Eclipse, Run DepotDinerPOS as a
@@ -10,7 +12,7 @@ COMPILING INSTRUCTIONS
 
 
 ------------------------------------------------------------------------
-PROGRAM DESCRIPTION
+Program Description
 ------------------------------------------------------------------------
 1. The Login Window will serve as the program's security.  Each time an
    employee wishes to interact with this application, they must enter
