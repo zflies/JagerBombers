@@ -36,7 +36,6 @@ public class OrdersView extends JFrame {
 	private JDesktopPane desktopPaneAllOrders;
 	private JDesktopPane desktopPaneViewOrder;
 	private JButton btnCreateOrder;
-	private JButton btnOrderHistory;
 	private JButton btnPayment;
 	private JButton btnAddToOrder;
 	private JScrollPane scrollPaneAllOrders;
@@ -45,11 +44,15 @@ public class OrdersView extends JFrame {
 	private JLabel lblTableNumber;
 	private JScrollPane scrollPaneViewOrder;
 	private JList list;
-	private static final int BREAKFAST_HOUR = 11;
 	private JTable tableAllOrders;
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
+	private JDialog dialogHistory;
 	
+	private static final int BREAKFAST_HOUR = 11;
+	
+	private Calendar calendar = Calendar.getInstance();
+
 	private Object columnNamesViewOrder[] = {"Item", "Notes", "Price"};
 
 	private Object rowDataViewOrderTable4 [][] = {
@@ -81,6 +84,7 @@ public class OrdersView extends JFrame {
 			{ "4", "Chicken Strips, KC Strip, Chicken Parmesan, Iced Tea, Iced, Tea, Soft Drink", "21.14"}};
 
 	private Object columnNamesAllOrders[] = { "TABLE", "ORDER DESCRIPTION", "TOTAL"};
+	private JButton btnHistory;
 
 
 
@@ -104,6 +108,7 @@ public class OrdersView extends JFrame {
 	 * Create the frame.
 	 */
 	public OrdersView() {
+		
 		setTitle("Steve's Depot Diner");
 	
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -131,14 +136,14 @@ public class OrdersView extends JFrame {
 		tabbedPaneOrders = new JTabbedPane(JTabbedPane.TOP);
 		GroupLayout gl_contentPaneOrders = new GroupLayout(contentPaneOrders);
 		gl_contentPaneOrders.setHorizontalGroup(
-			gl_contentPaneOrders.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPaneOrders.createSequentialGroup()
+			gl_contentPaneOrders.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPaneOrders.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblEmployee, GroupLayout.PREFERRED_SIZE, 340, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED, 436, Short.MAX_VALUE)
+					.addComponent(lblEmployee, GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
+					.addGap(18)
 					.addComponent(btnExit, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
 					.addGap(14))
-				.addComponent(tabbedPaneOrders, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+				.addComponent(tabbedPaneOrders, GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
 		);
 		gl_contentPaneOrders.setVerticalGroup(
 			gl_contentPaneOrders.createParallelGroup(Alignment.LEADING)
@@ -202,7 +207,6 @@ public class OrdersView extends JFrame {
 		btnAddToOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Calendar calendar = Calendar.getInstance();
 				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
 					System.out.println("Opening Breakfast Menu!");
 					BreakfastView breakfast = new BreakfastView();
@@ -238,14 +242,14 @@ public class OrdersView extends JFrame {
 					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnAddToOrder, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnAddToOrder, GroupLayout.PREFERRED_SIZE, 194, Short.MAX_VALUE)
 								.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 									.addComponent(lblTable)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)))
-							.addPreferredGap(ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+							.addGap(15)
 							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnPayment, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnPayment, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
 								.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)))
 						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 							.addComponent(scrollPaneViewOrder, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
@@ -309,36 +313,44 @@ public class OrdersView extends JFrame {
 		
 		btnCreateOrder.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		btnOrderHistory = new JButton("ORDER HISTORY");
-		btnOrderHistory.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		
 		scrollPaneAllOrders = new JScrollPane();
+		
+		btnHistory = new JButton("ORDER HISTORY");
+		btnHistory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				dialogHistory = new OrderHistoryDialog();
+				dialogHistory.setVisible(true);
+				dialogHistory.setLocationRelativeTo(null);
+				dialogHistory.setTitle(  (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.YEAR) + " Order History");
+				dialogHistory.setAlwaysOnTop(true);	
+			}
+		});
+		btnHistory.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		GroupLayout gl_desktopPaneAllOrders = new GroupLayout(desktopPaneAllOrders);
 		gl_desktopPaneAllOrders.setHorizontalGroup(
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
-							.addComponent(btnOrderHistory, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-							.addComponent(btnCreateOrder))
-						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
-							.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-							.addGap(2)))
-					.addContainerGap())
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
+						.addGroup(Alignment.LEADING, gl_desktopPaneAllOrders.createSequentialGroup()
+							.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 190, Short.MAX_VALUE)
+							.addGap(18)
+							.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 193, Short.MAX_VALUE))
+						.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
+					.addGap(8))
 		);
 		gl_desktopPaneAllOrders.setVerticalGroup(
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
-					.addGap(7)
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(btnOrderHistory, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnCreateOrder, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
-					.addContainerGap())
+					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+					.addGap(7))
 		);
 		
 	
