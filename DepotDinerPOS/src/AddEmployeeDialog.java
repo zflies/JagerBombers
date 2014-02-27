@@ -49,7 +49,8 @@ public class AddEmployeeDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public AddEmployeeDialog() {
-		setTitle("");
+		setTitle("Add Employee");
+		String[] positions = { "Server", "Cook", "Manager"};
 		setBounds(100, 100, 675, 520);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -79,7 +80,7 @@ public class AddEmployeeDialog extends JDialog {
 		JLabel lblPosition = new JLabel("Position:");
 		lblPosition.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		JComboBox comboBoxPosition = new JComboBox();
+		JComboBox comboBoxPosition = new JComboBox(positions);
 		{
 			buttonPane = new JPanel();
 			{
