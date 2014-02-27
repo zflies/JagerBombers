@@ -21,6 +21,9 @@ import javax.swing.text.StyledDocument;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 
 public class BreakfastView extends JFrame {
@@ -51,42 +54,29 @@ public class BreakfastView extends JFrame {
 		setTitle("Steve's Depot Diner");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 796, 675);
+		setBounds(100, 100, 1643, 878);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		String[] tables = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
 				"16", "17", "18", "19", "20", "21", "22", "23", "24", "25"};
 		
 		JLabel lblTable = new JLabel("Table");
 		lblTable.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblTable.setBounds(49, 94, 87, 23);
-		contentPane.add(lblTable);
 		JComboBox comboBox = new JComboBox(tables);
 		comboBox.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		comboBox.setBounds(274, 94, 96, 27);
-		contentPane.add(comboBox);
 		
 		final JTextPane textPane = new JTextPane();
-		textPane.setBounds(47, 129, 323, 700);
-		contentPane.add(textPane);
 		
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setForeground(Color.BLACK);
-		btnCancel.setBounds(47, 926, 117, 61);
-		contentPane.add(btnCancel);
 		
 		JButton btnCreate = new JButton("Create");
-		btnCreate.setBounds(1540, 926, 117, 61);
-		contentPane.add(btnCreate);
 		
 		JLabel lblCombinations = new JLabel("Combinations");
 		lblCombinations.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		lblCombinations.setHorizontalAlignment(SwingConstants.LEFT);
-		lblCombinations.setBounds(519, 122, 212, 36);
-		contentPane.add(lblCombinations);
 		
 		JButton btnBaconEggs = new JButton("Bacon & Eggs");
 		btnBaconEggs.addMouseListener(new MouseAdapter() {
@@ -104,215 +94,333 @@ public class BreakfastView extends JFrame {
 			}
 		});
 		btnBaconEggs.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnBaconEggs.setBounds(519, 190, 124, 27);
-		contentPane.add(btnBaconEggs);
 		
 		JButton btnSausageEggs = new JButton("Sausage & Eggs");
 		btnSausageEggs.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSausageEggs.setBounds(659, 189, 143, 29);
-		contentPane.add(btnSausageEggs);
 		
 		JButton btnHamEggs = new JButton("Ham & Eggs");
 		btnHamEggs.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnHamEggs.setBounds(814, 189, 113, 29);
-		contentPane.add(btnHamEggs);
 		
 		JLabel lblOmelets = new JLabel("Omelets");
 		lblOmelets.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblOmelets.setBounds(519, 251, 124, 23);
-		contentPane.add(lblOmelets);
 		
 		JButton btnDenver = new JButton("Denver");
 		btnDenver.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnDenver.setBounds(519, 310, 124, 29);
-		contentPane.add(btnDenver);
 		
 		JButton btnCheese = new JButton("Cheese");
 		btnCheese.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnCheese.setBounds(655, 310, 117, 29);
-		contentPane.add(btnCheese);
 		
 		JButton btnVeggie = new JButton("Veggie");
 		btnVeggie.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnVeggie.setBounds(784, 310, 117, 29);
-		contentPane.add(btnVeggie);
 		
 		JButton btnSouthwest = new JButton("Southwest");
 		btnSouthwest.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSouthwest.setBounds(913, 310, 117, 29);
-		contentPane.add(btnSouthwest);
 		
 		JLabel lblSpecialties = new JLabel("Specialties");
 		lblSpecialties.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblSpecialties.setBounds(519, 351, 160, 43);
-		contentPane.add(lblSpecialties);
 		
 		JButton btnExpress = new JButton("Express");
 		btnExpress.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnExpress.setBounds(519, 418, 117, 29);
-		contentPane.add(btnExpress);
 		
 		JButton btnExpress2Egg = new JButton("Express 2 Egg");
 		btnExpress2Egg.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnExpress2Egg.setBounds(659, 418, 132, 29);
-		contentPane.add(btnExpress2Egg);
 		
 		JButton btnFrenchToast = new JButton("French Toast");
 		btnFrenchToast.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnFrenchToast.setBounds(803, 418, 132, 29);
-		contentPane.add(btnFrenchToast);
 		
 		JButton btnTripStack = new JButton("Trip Stack");
 		btnTripStack.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnTripStack.setBounds(519, 459, 117, 29);
-		contentPane.add(btnTripStack);
 		
 		JButton btnTripStackBlue = new JButton("Trip Stack Blue");
 		btnTripStackBlue.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnTripStackBlue.setBounds(659, 459, 132, 29);
-		contentPane.add(btnTripStackBlue);
 		
 		JButton btnBiscGravy = new JButton("Biscs & Gravy");
 		btnBiscGravy.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnBiscGravy.setBounds(803, 459, 132, 29);
-		contentPane.add(btnBiscGravy);
 		
 		JButton btnWaffle = new JButton("Waffle");
 		btnWaffle.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnWaffle.setBounds(519, 500, 117, 29);
-		contentPane.add(btnWaffle);
 		
 		JButton btnWaffleCombo = new JButton("Waffle Combo");
 		btnWaffleCombo.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnWaffleCombo.setBounds(803, 500, 132, 29);
-		contentPane.add(btnWaffleCombo);
 		
 		JLabel lblSides = new JLabel("Sides");
 		lblSides.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblSides.setBounds(519, 568, 87, 27);
-		contentPane.add(lblSides);
 		
 		JButton btnHashBrown = new JButton("Hash Brown");
 		btnHashBrown.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnHashBrown.setBounds(519, 618, 117, 29);
-		contentPane.add(btnHashBrown);
 		
 		JButton btnCinnamonRoll = new JButton("Cinnamon Roll");
 		btnCinnamonRoll.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnCinnamonRoll.setBounds(655, 619, 136, 29);
-		contentPane.add(btnCinnamonRoll);
 		
 		JButton btnBacon = new JButton("Bacon");
 		btnBacon.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnBacon.setBounds(803, 619, 117, 29);
-		contentPane.add(btnBacon);
 		
 		JButton btnSausage = new JButton("Sausage");
 		btnSausage.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSausage.setBounds(519, 659, 117, 29);
-		contentPane.add(btnSausage);
 		
 		JButton btnBiscuitGravy = new JButton("Biscuit & Gravy");
 		btnBiscuitGravy.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnBiscuitGravy.setBounds(655, 660, 136, 29);
-		contentPane.add(btnBiscuitGravy);
 		
 		JButton btnToast = new JButton("Toast");
 		btnToast.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnToast.setBounds(803, 660, 117, 29);
-		contentPane.add(btnToast);
 		
 		JLabel lblDrinks = new JLabel("Drinks");
 		lblDrinks.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblDrinks.setBounds(1190, 133, 96, 25);
-		contentPane.add(lblDrinks);
 		
 		JButton btnSoftDrink = new JButton("Soft Drink");
 		btnSoftDrink.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSoftDrink.setBounds(1178, 189, 117, 29);
-		contentPane.add(btnSoftDrink);
 		
 		JButton btnCoffee = new JButton("Coffee");
 		btnCoffee.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnCoffee.setBounds(1307, 189, 117, 29);
-		contentPane.add(btnCoffee);
 		
 		JButton btnDecaf = new JButton("Decaf");
 		btnDecaf.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnDecaf.setBounds(1436, 189, 117, 29);
-		contentPane.add(btnDecaf);
 		
 		JButton btnTea = new JButton("Hot Tea");
 		btnTea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnTea.setBounds(1178, 230, 117, 29);
-		contentPane.add(btnTea);
 		
 		JButton btnIcedTea = new JButton("Iced Tea");
 		btnIcedTea.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnIcedTea.setBounds(1307, 230, 117, 29);
-		contentPane.add(btnIcedTea);
 		
 		JButton btnSmMilk = new JButton("SM Milk");
 		btnSmMilk.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSmMilk.setBounds(1178, 271, 117, 29);
-		contentPane.add(btnSmMilk);
 		
 		JButton btnLgMilk = new JButton("LG Milk");
 		btnLgMilk.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnLgMilk.setBounds(1307, 271, 117, 29);
-		contentPane.add(btnLgMilk);
 		
 		JButton btnSmOrange = new JButton("SM Orange");
 		btnSmOrange.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSmOrange.setBounds(1178, 312, 117, 29);
-		contentPane.add(btnSmOrange);
 		
 		JButton btnLgOrange = new JButton("LG Orange");
 		btnLgOrange.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnLgOrange.setBounds(1307, 312, 117, 29);
-		contentPane.add(btnLgOrange);
 		
 		JButton btnSmApple = new JButton("SM Apple");
 		btnSmApple.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSmApple.setBounds(1178, 353, 117, 29);
-		contentPane.add(btnSmApple);
 		
 		JButton btnLgApple = new JButton("LG Apple");
 		btnLgApple.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnLgApple.setBounds(1307, 353, 117, 29);
-		contentPane.add(btnLgApple);
 		
 		JButton btnSmCranberry = new JButton("SM Cranberry");
 		btnSmCranberry.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSmCranberry.setBounds(1178, 394, 124, 29);
-		contentPane.add(btnSmCranberry);
 		
 		JButton btnLgCranberry = new JButton("LG Cranberry");
 		btnLgCranberry.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnLgCranberry.setBounds(1307, 394, 124, 29);
-		contentPane.add(btnLgCranberry);
-		
-		JSeparator separator = new JSeparator();
-		separator.setOrientation(SwingConstants.VERTICAL);
-		separator.setForeground(Color.DARK_GRAY);
-		separator.setBackground(Color.WHITE);
-		separator.setBounds(1099, 59, 12, 903);
-		contentPane.add(separator);
 		
 		JButton btnSteakAndEggs = new JButton("Steak & Eggs");
 		btnSteakAndEggs.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnSteakAndEggs.setBounds(939, 189, 117, 29);
-		contentPane.add(btnSteakAndEggs);
 		
 		JButton btnWaffleBlue = new JButton("Waffle Blue");
 		btnWaffleBlue.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
-		btnWaffleBlue.setBounds(659, 500, 132, 29);
-		contentPane.add(btnWaffleBlue);
 		
 		lblTotal = new JLabel("Total: $0.00");
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
-		lblTotal.setBounds(49, 862, 321, 27);
-		contentPane.add(lblTotal);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(5)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(44)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 321, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, 0, Short.MAX_VALUE))))
+						.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+							.addGap(42)
+							.addComponent(textPane, GroupLayout.PREFERRED_SIZE, 323, GroupLayout.PREFERRED_SIZE)
+							.addGap(149)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblCombinations, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnBaconEggs, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+									.addGap(16)
+									.addComponent(btnSausageEggs, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnHamEggs, GroupLayout.PREFERRED_SIZE, 113, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnSteakAndEggs, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblOmelets, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnDenver, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnCheese, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnVeggie, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnSouthwest, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblSpecialties, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnExpress, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(23)
+									.addComponent(btnExpress2Egg, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnFrenchToast, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnTripStack, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(23)
+									.addComponent(btnTripStackBlue, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnBiscGravy, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnWaffle, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(23)
+									.addComponent(btnWaffleBlue, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnWaffleCombo, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
+								.addComponent(lblSides, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnHashBrown, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(19)
+									.addComponent(btnCinnamonRoll, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnBacon, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(btnSausage, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+									.addGap(19)
+									.addComponent(btnBiscuitGravy, GroupLayout.PREFERRED_SIZE, 136, GroupLayout.PREFERRED_SIZE)
+									.addGap(12)
+									.addComponent(btnToast, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)))
+							.addGap(122)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(btnSoftDrink)
+										.addComponent(btnTea, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSmMilk, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSmOrange, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSmApple, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnSmCranberry, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE))
+									.addGap(5)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(btnCoffee, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnIcedTea, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnLgMilk, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnLgOrange, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnLgApple, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+										.addComponent(btnLgCranberry, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)))
+								.addComponent(lblDrinks, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnDecaf, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
+					.addGap(85))
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(44)
+					.addComponent(lblTable, GroupLayout.PREFERRED_SIZE, 87, GroupLayout.PREFERRED_SIZE)
+					.addGap(138)
+					.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(1268, Short.MAX_VALUE))
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(89)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblTable, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+						.addComponent(comboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(1)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(7)
+							.addComponent(textPane, GroupLayout.DEFAULT_SIZE, 574, Short.MAX_VALUE)
+							.addGap(1))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblCombinations)
+								.addComponent(lblDrinks, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+							.addGap(31)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnBaconEggs, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnSausageEggs)
+								.addComponent(btnHamEggs)
+								.addComponent(btnSteakAndEggs))
+							.addGap(33)
+							.addComponent(lblOmelets, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addGap(36)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnDenver)
+								.addComponent(btnCheese)
+								.addComponent(btnVeggie)
+								.addComponent(btnSouthwest))
+							.addGap(12)
+							.addComponent(lblSpecialties, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+							.addGap(24)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnExpress)
+								.addComponent(btnExpress2Egg)
+								.addComponent(btnFrenchToast))
+							.addGap(12)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnTripStack)
+								.addComponent(btnTripStackBlue)
+								.addComponent(btnBiscGravy))
+							.addGap(12)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnWaffle)
+								.addComponent(btnWaffleBlue)
+								.addComponent(btnWaffleCombo))
+							.addGap(39)
+							.addComponent(lblSides, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+							.addGap(23)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnHashBrown)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnCinnamonRoll))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnBacon)))
+							.addGap(11)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnSausage)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnBiscuitGravy))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(1)
+									.addComponent(btnToast))))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(67)
+							.addComponent(btnSoftDrink)
+							.addGap(12)
+							.addComponent(btnTea)
+							.addGap(12)
+							.addComponent(btnSmMilk)
+							.addGap(12)
+							.addComponent(btnSmOrange)
+							.addGap(12)
+							.addComponent(btnSmApple)
+							.addGap(12)
+							.addComponent(btnSmCranberry))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(67)
+							.addComponent(btnCoffee)
+							.addGap(12)
+							.addComponent(btnIcedTea)
+							.addGap(12)
+							.addComponent(btnLgMilk)
+							.addGap(12)
+							.addComponent(btnLgOrange)
+							.addGap(12)
+							.addComponent(btnLgApple)
+							.addGap(12)
+							.addComponent(btnLgCranberry))
+						.addGroup(gl_contentPane.createSequentialGroup()
+							.addGap(67)
+							.addComponent(btnDecaf)))
+					.addGap(23)
+					.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+					.addGap(30)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
+		);
+		contentPane.setLayout(gl_contentPane);
 	}
 	private void updateTotal(double itemPrice){
 		String totalText = lblTotal.getText();
