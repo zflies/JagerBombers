@@ -1,0 +1,3 @@
+username:  avalenti
+password:  Ji5OE2j3
+url:  mysql.eecs.ku.edu/

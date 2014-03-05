@@ -7,8 +7,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JPasswordField;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.SwingConstants;
@@ -82,22 +84,29 @@ public class LoginWindow extends JFrame {
 				String pin = new  String(txtEmployeePin.getPassword());
 				//access DB and return the associated employee
 
+				Employee loggedInEmployee;
+				try {
+					loggedInEmployee = Employee.getEmployeeByPIN(pin);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, "Employee could not be found", "Invalid PIN", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				//check employee type and open corresponding window
-				if(pin.compareTo("1") == 0){
+				if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Staff){
 					//open orders window
 					System.out.println("Opening Orders Window!");
 					OrdersView Orders = new OrdersView();
 					Orders.setVisible(true);
 					Orders.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
-				else if(pin.compareTo("2") == 0){
+				else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Kitchen){
 					//open kitchen window
 					System.out.println("Opening Kitchen Window!");
 					KitchenView Kitchen = new KitchenView();
 					Kitchen.setVisible(true);
 					Kitchen.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
-				else if(pin.compareTo("3") == 0){
+				else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Manager){
 					//open manager window
 					System.out.println("Opening Manager Window!");
 					ManageView Manage = new ManageView();
@@ -106,7 +115,7 @@ public class LoginWindow extends JFrame {
 				}
 				else{
 					//error, pin couldn't be matched
-					JOptionPane.showMessageDialog(frame, "Employee Type could not be resolved", "Employee Type Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Employee Position could not be resolved", "Invalid Employee Position", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				frame.setVisible(false);
