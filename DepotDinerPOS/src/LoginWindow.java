@@ -85,7 +85,7 @@ public class LoginWindow extends JFrame {
 				try {
 					loggedInEmployee = Employee.getEmployeeByPIN(pin);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, "Employee could not be found", "Invalid PIN", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				//check employee type and open corresponding window
