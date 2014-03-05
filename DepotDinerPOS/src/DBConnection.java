@@ -41,8 +41,8 @@ public class DBConnection {
 			System.err.println("Error: " + e1.getMessage());
 			System.err.println("Please place config.txt under your project Root folder.");
 		}
-		//String url = "jdbc:mysql://" + configURL + username; //server + database string
-		String url = "jdbc:mysql://mysql.eecs.ku.edu/avalenti"; //server + database string
+		String url = "jdbc:mysql://" + configURL + username; //server + database string
+		//String url = "jdbc:mysql://mysql.eecs.ku.edu/avalenti"; //server + database string
 		Statement stmt = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -86,7 +86,7 @@ public class DBConnection {
 	
 	private static void ConfigHandler() throws IOException{
 		
-		FileInputStream fis = new FileInputStream("DBconfig.txt");
+		FileInputStream fis = new FileInputStream("DBConfig.txt");
 		DataInputStream in = new DataInputStream(fis);
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		String strLine;

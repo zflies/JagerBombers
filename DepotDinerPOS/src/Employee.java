@@ -1,3 +1,7 @@
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 
 public class Employee {
 	
@@ -59,8 +63,18 @@ public class Employee {
 	}
 	
 	public String getStringEmployeeType(){
-		//TODO: FINISH THIS
-		return "PartTime";
+		switch (EType) {
+		case FullTime: 
+			return "FullTime";
+		case PartTime:
+			return "PartTime";
+		default: 
+			return "PartTime";
+		}
+	}
+	
+	public EmployeePosition getEmployeePosition(){
+		return EPosition;
 	}
 	
 	public String getStringEmployeePosition(){
@@ -78,6 +92,39 @@ public class Employee {
 	
 	public String getFullName(){
 		return FirstName + " " + LastName;
+	}
+	
+	public static Employee getEmployeeByPIN(String PIN) throws Exception{
+		Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM Employees WHERE PIN = " + PIN + ";";
+		String firstname = "";
+		String lastname = "";
+		String position = "";
+		String type = "";
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				if(rs.next() == true) {
+					firstname = rs.getString("FirstName");
+					lastname = rs.getString("LastName");
+					position = rs.getString("Position");
+					type = rs.getString("Type");
+					//System.out.println(firstname);
+					//System.out.println(lastname);
+					//System.out.println(position);
+					//System.out.println(type);
+				}
+				else {
+					throw new Exception("Employee not found");
+				}
+			} catch (SQLException e) {
+				throw new Exception("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		return new Employee(firstname, lastname, position, type);
 	}
 	
 }
