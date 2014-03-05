@@ -1,4 +1,6 @@
+import java.awt.Component;
 import java.awt.EventQueue;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -7,21 +9,34 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 import java.awt.Font;
+
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JList;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
 import java.awt.Color;
+
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
 import javax.swing.JDesktopPane;
+
 import java.util.Calendar;
 
 
@@ -48,6 +63,8 @@ public class OrdersView extends JFrame {
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
 	private JDialog dialogHistory;
+	private int nTempCount = 0;		//< Temporary until the DB connection is worked out
+
 	
 	private static final int BREAKFAST_HOUR = 11;
 	
@@ -81,7 +98,7 @@ public class OrdersView extends JFrame {
 	private Object rowDataAllOrders[][] = { 
 			{ "10", "Southwest Omelette, 8oz. KC Strip & Eggs, Milk, Soft Drink, Coffee", "$23.95"},
 			{ "7", "Meat Loaf, Country Fried Steak, Catfish and Chips, Iced Tea, Soft Drink", "$29.86"},
-			{ "4", "Chicken Strips, KC Strip, Chicken Parmesan, Iced Tea, Iced, Tea, Soft Drink", "21.14"}};
+			{ "4", "Chicken Strips, KC Strip, Chicken Parmesan, Iced Tea, Iced, Tea, Soft Drink", "$21.14"}};
 
 	private Object columnNamesAllOrders[] = { "TABLE", "ORDER DESCRIPTION", "TOTAL"};
 	private JButton btnHistory;
@@ -96,7 +113,9 @@ public class OrdersView extends JFrame {
 			public void run() {
 				try {
 					frame = new OrdersView();
+					frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -118,13 +137,14 @@ public class OrdersView extends JFrame {
 		setContentPane(contentPaneOrders);
 		
 		btnExit = new JButton("EXIT");
+		btnExit.setMnemonic(KeyEvent.VK_X);
+
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				dispose();
 				LoginWindow Login = new LoginWindow();
 				Login.setVisible(true);
 				Login.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				frame.setVisible(false);
-				frame.dispose();
 			}
 		});
 		btnExit.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
@@ -189,6 +209,8 @@ public class OrdersView extends JFrame {
 		);
 		
 		btnPayment = new JButton("PAYMENT");
+		btnPayment.setMnemonic(KeyEvent.VK_P);
+
 		btnPayment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
@@ -204,6 +226,8 @@ public class OrdersView extends JFrame {
 		btnPayment.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		btnAddToOrder = new JButton("ADD TO ORDER");
+		btnAddToOrder.setMnemonic(KeyEvent.VK_A);
+
 		btnAddToOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -285,7 +309,16 @@ public class OrdersView extends JFrame {
 			}
 		});
 		
-	
+		calcColumnWidths( tableViewOrder );
+		
+		TableColumnModel columns = tableViewOrder.getColumnModel();
+		TableColumn column = columns.getColumn(1);
+		column.setMinWidth(250);
+		column.setMaxWidth(450);
+		
+		column = columns.getColumn(2);
+		column.setMinWidth(130);
+		column.setMaxWidth(250);
 		tableViewOrder.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		tableViewOrder.setRowHeight(tableViewOrder.getRowHeight() + 20);
 			
@@ -293,6 +326,7 @@ public class OrdersView extends JFrame {
 		desktopPaneViewOrder.setLayout(gl_desktopPaneViewOrder);
 		
 		btnCreateOrder = new JButton("CREATE ORDER");
+		btnCreateOrder.setMnemonic(KeyEvent.VK_C);
 		btnCreateOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Calendar calendar = Calendar.getInstance();
@@ -316,6 +350,8 @@ public class OrdersView extends JFrame {
 		scrollPaneAllOrders = new JScrollPane();
 		
 		btnHistory = new JButton("ORDER HISTORY");
+		btnHistory.setMnemonic(KeyEvent.VK_H);
+
 		btnHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -354,7 +390,6 @@ public class OrdersView extends JFrame {
 		);
 		
 	
-				
 		tableAllOrders = new JTable(new DefaultTableModel(rowDataAllOrders, columnNamesAllOrders) {
 			boolean[] columnEditables = new boolean[] {
 				false, false, false
@@ -362,31 +397,97 @@ public class OrdersView extends JFrame {
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
-			
 		});
 		
 		tableAllOrders.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
-	            // do some actions here, for example
-	            // print first column value from selected row
-	            System.out.println(tableAllOrders.getValueAt(tableAllOrders.getSelectedRow(), 0).toString());
-	           
+	           	            
+	            // TODO: Update View Order table based on All Orders table selection
+	            
+	            // tableAllOrders.getValueAt(tableAllOrders.getSelectedRow(), 0).toString() // Retrieves row selctions from All Orders table
+	        	if ( nTempCount > 0)	
+	        	{
+		            ((DefaultTableModel) tableViewOrder.getModel()).setDataVector( rowDataViewOrderTable7, columnNamesViewOrder); // Sets the data in the View Order table
+	        	}
+	        	nTempCount++;
 	        }
 	    });
 		
+		calcColumnWidths( tableAllOrders);
 		
+		columns = tableAllOrders.getColumnModel();
+		column = columns.getColumn(0);
+		column.setMinWidth(60);
+		column.setMaxWidth(100);
+		
+		column = columns.getColumn(2);
+		column.setMinWidth(130);
+		column.setMaxWidth(250);
 		tableAllOrders.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tableAllOrders.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		tableAllOrders.setRowHeight(tableAllOrders.getRowHeight() + 50);
+		tableAllOrders.changeSelection(0, 0, false, false);
 	
-		
-		
-		
 		scrollPaneAllOrders.setViewportView(tableAllOrders);
 		desktopPaneAllOrders.setLayout(gl_desktopPaneAllOrders);
 		panelOrders.setLayout(gl_panelOrders);
 		contentPaneOrders.setLayout(gl_contentPaneOrders);
-		
-		
+	}
+	
+	public static void calcColumnWidths(JTable table)
+	{
+	    JTableHeader header = table.getTableHeader();
+
+	    TableCellRenderer defaultHeaderRenderer = null;
+
+	    if (header != null)
+	        defaultHeaderRenderer = header.getDefaultRenderer();
+
+	    TableColumnModel columns = table.getColumnModel();
+	    TableModel data = table.getModel();
+
+	    int margin = columns.getColumnMargin(); 
+
+	    int rowCount = data.getRowCount();
+
+	    for (int i = columns.getColumnCount() - 1; i >= 0; --i)
+	    {
+	        TableColumn column = columns.getColumn(i);
+	            
+	        int columnIndex = column.getModelIndex();
+	            
+	        int width = -1; 
+
+	        TableCellRenderer h = column.getHeaderRenderer();
+	          
+	        if (h == null)
+	            h = defaultHeaderRenderer;
+	            
+	        if (h != null) 
+	        {
+	            Component c = h.getTableCellRendererComponent
+	                   (table, column.getHeaderValue(),
+	                    false, false, -1, i);
+	                    
+	            width = c.getPreferredSize().width;
+	        }
+	       
+	        for (int row = rowCount - 1; row >= 0; --row)
+	        {
+	            TableCellRenderer r = table.getCellRenderer(row, i);
+	                 
+	            Component c = r.getTableCellRendererComponent
+	               (table,
+	                data.getValueAt(row, columnIndex),
+	                false, false, row, i);
+	        
+	                width = Math.max(width, c.getPreferredSize().width);
+	        }
+
+	        if (width >= 0)
+	        {
+	            column.setPreferredWidth(width + margin); 
+	        }
+	    }
 	}
 }

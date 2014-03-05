@@ -24,6 +24,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 public class DinnerView extends JFrame {
 
 private JPanel contentPane;
+private static JButton btnCreate;
 
 /**
 * Launch the application.
@@ -34,6 +35,8 @@ public static void main(String[] args) {
 			try {
 				DinnerView frame = new DinnerView();
 				frame.setVisible(true);
+				frame.getRootPane().setDefaultButton(btnCreate);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -65,7 +68,7 @@ public DinnerView() {
 	JButton btnCancel = new JButton("Cancel");
 	btnCancel.setForeground(Color.BLACK);
 	
-	JButton btnCreate = new JButton("Create");
+	btnCreate = new JButton("Create");
 	
 	JLabel lblAppetizers = new JLabel("Appetizers");
 	lblAppetizers.setFont(new Font("Lucida Grande", Font.PLAIN, 30));

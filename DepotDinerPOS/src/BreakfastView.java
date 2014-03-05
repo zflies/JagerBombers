@@ -30,6 +30,7 @@ public class BreakfastView extends JFrame {
 
 	private JPanel contentPane;
 	private JLabel lblTotal;
+	private static JButton btnCreate;
 
 	/**
 	 * Launch the application.
@@ -40,6 +41,8 @@ public class BreakfastView extends JFrame {
 				try {
 					BreakfastView frame = new BreakfastView();
 					frame.setVisible(true);
+					frame.getRootPane().setDefaultButton(btnCreate);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -72,7 +75,7 @@ public class BreakfastView extends JFrame {
 		JButton btnCancel = new JButton("Cancel");
 		btnCancel.setForeground(Color.BLACK);
 		
-		JButton btnCreate = new JButton("Create");
+		btnCreate = new JButton("Create");
 		
 		JLabel lblCombinations = new JLabel("Combinations");
 		lblCombinations.setFont(new Font("Lucida Grande", Font.PLAIN, 30));

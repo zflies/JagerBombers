@@ -40,11 +40,14 @@ public class LoginBackground {
 		frame.setResizable(false);
 		frame.setBounds(5, 5, 100, 200);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
-		device.setFullScreenWindow(frame);
+		
 		LoginWindow login = new LoginWindow();
 		login.setAlwaysOnTop(true);
 		login.setVisible(true);
+		
+		
+		//GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
+		//device.setFullScreenWindow(frame);
 		
 		
 		
