@@ -31,7 +31,8 @@ public class BreakfastView extends JFrame {
 	private JPanel contentPane;
 	private JLabel lblTotal;
 	private DecimalFormat df = new DecimalFormat("#.00");
-	private JTable OrdersTable;
+	private JTable ordersTable;
+	String column_names[]= {"Item","Notes","Price"};
 
 	/**
 	 * Launch the application.
@@ -601,11 +602,10 @@ public class BreakfastView extends JFrame {
 						.addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)))
 		);
 		
-		String column_names[]= {"Item","Notes","Price"};
 		DefaultTableModel table_model= new DefaultTableModel(column_names, 0);
-		OrdersTable = new JTable(table_model);
-		OrdersTable.setFont(new Font("Lucida Grande", Font.BOLD, 15));
-		scrollPane.setViewportView(OrdersTable);
+		ordersTable = new JTable(table_model);
+		ordersTable.setFont(new Font("Lucida Grande", Font.BOLD, 15));
+		scrollPane.setViewportView(ordersTable);
 		contentPane.setLayout(gl_contentPane);
 	}
 	
@@ -625,7 +625,7 @@ public class BreakfastView extends JFrame {
 	
 	private String createOrderCSV(){
 		String csv = "";
-		DefaultTableModel model = (DefaultTableModel) OrdersTable.getModel();
+		DefaultTableModel model = (DefaultTableModel) ordersTable.getModel();
 		Vector<Vector> outer = model.getDataVector();
 		for(int i = 0; i < outer.size(); i++){
 			Vector inner = outer.elementAt(i);
@@ -675,7 +675,7 @@ public class BreakfastView extends JFrame {
 	}
 	
 	private void updateTicket(String itemName, double itemPrice){
-		DefaultTableModel model = (DefaultTableModel) OrdersTable.getModel();
+		DefaultTableModel model = (DefaultTableModel) ordersTable.getModel();
 		model.addRow(new Object[]{itemName, "", df.format(itemPrice)});
 	}
 }
