@@ -29,25 +29,6 @@ public class ManageView extends JFrame {
 	
 	private String employeeName;
 
-
-	/**
-	 * Launch the application.
-	 */
-	/*
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					frame = new ManageView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-	*/
-
 	/**
 	 * Create the frame.
 	 */

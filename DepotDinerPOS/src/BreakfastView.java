@@ -32,30 +32,13 @@ public class BreakfastView extends JFrame {
 	private JLabel lblTotal;
 	private static JButton btnCreate;
 	private DecimalFormat df = new DecimalFormat("#.00");
-	private JTable OrdersTable;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					BreakfastView frame = new BreakfastView();
-					frame.setVisible(true);
-					frame.getRootPane().setDefaultButton(btnCreate);
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private JTable ordersTable;
+	String column_names[]= {"Item","Notes","Price"};
 
 	/**
 	 * Create the frame.
 	 */
-	public BreakfastView() {
+	public BreakfastView( final String employeePIN ) {
 		setTitle("Steve's Depot Diner");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,13 +56,14 @@ public class BreakfastView extends JFrame {
 		tableNumberComboBox.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//OrdersView ordersView = new OrdersView();
-				//ordersView.setVisible(true);
-				//ordersView.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				//dispose();
+				dispose();
 			}
 		});
 		btnCancel.setForeground(Color.BLACK);
@@ -89,12 +73,12 @@ public class BreakfastView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Go through all rows in ordersTable and get the itemName, notes (if any) and itemprice
 				//Form query consisting of Employee PIN, Table No, items/notes (as CSV), status = entered, and totalprice
-				int employeePin = 1111; //Need to figure out how we are going to pass the employee from view to view Singleton??
 				int tableNumber = tableNumberComboBox.getSelectedIndex() + 1;
 				String itemsCSV = createOrderCSV();
 				double totalPrice = getCurrentTotal();
-				String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES ('%s', '%s', '%s', 'entered', '%s');", employeePin, tableNumber, itemsCSV, totalPrice);
+				String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES ('%s', '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
 				placeOrder(query);
+				dispose();
 			}
 		});
 				
@@ -603,11 +587,10 @@ public class BreakfastView extends JFrame {
 						.addComponent(btnCreate, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)))
 		);
 		
-		String column_names[]= {"Item","Notes","Price"};
 		DefaultTableModel table_model= new DefaultTableModel(column_names, 0);
-		OrdersTable = new JTable(table_model);
-		OrdersTable.setFont(new Font("Lucida Grande", Font.BOLD, 15));
-		scrollPane.setViewportView(OrdersTable);
+		ordersTable = new JTable(table_model);
+		ordersTable.setFont(new Font("Lucida Grande", Font.BOLD, 15));
+		scrollPane.setViewportView(ordersTable);
 		contentPane.setLayout(gl_contentPane);
 	}
 	
@@ -627,7 +610,7 @@ public class BreakfastView extends JFrame {
 	
 	private String createOrderCSV(){
 		String csv = "";
-		DefaultTableModel model = (DefaultTableModel) OrdersTable.getModel();
+		DefaultTableModel model = (DefaultTableModel) ordersTable.getModel();
 		Vector<Vector> outer = model.getDataVector();
 		for(int i = 0; i < outer.size(); i++){
 			Vector inner = outer.elementAt(i);
@@ -677,7 +660,7 @@ public class BreakfastView extends JFrame {
 	}
 	
 	private void updateTicket(String itemName, double itemPrice){
-		DefaultTableModel model = (DefaultTableModel) OrdersTable.getModel();
+		DefaultTableModel model = (DefaultTableModel) ordersTable.getModel();
 		model.addRow(new Object[]{itemName, "", df.format(itemPrice)});
 	}
 }

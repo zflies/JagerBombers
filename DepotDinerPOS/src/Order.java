@@ -93,7 +93,7 @@ public class Order {
 		Vector<Order> TempVector = new Vector<Order>();
 		
 		try {
-			TempVector = getEnteredOrders();
+			TempVector = getServedOrders();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
@@ -105,7 +105,7 @@ public class Order {
 		}
 		
 		try {
-			TempVector = getServedOrders();
+			TempVector = getEnteredOrders();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();

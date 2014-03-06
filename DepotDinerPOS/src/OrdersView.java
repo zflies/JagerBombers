@@ -61,59 +61,59 @@ public class OrdersView extends JFrame {
 	private JLabel lblTotal;
 	private JLabel lblTableNumber;
 	private JScrollPane scrollPaneViewOrder;
-	private JTable tableAllOrders;
+	private static JTable tableAllOrders;
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
 	private JDialog dialogHistory;
-
+	private static TableColumnModel columns;
+	private static TableColumn column;
+	
 	private static final int BREAKFAST_HOUR = 11;
 	
 	private Calendar calendar = Calendar.getInstance();
 
 	private Object columnNamesViewOrder[] = {"Item", "Notes", "Price"};					//< Column Names for the View Order table
-	private Vector<String> columnNamesAllOrders = new Vector<String>();	//< Column Names for the View All Orders table
+	private static Vector<String> columnNamesAllOrders = new Vector<String>();	//< Column Names for the View All Orders table
 
-	private Vector<Order> AllOrdersInProgress = new Vector<Order>(); //< Holds every order for all employees in DB
-	private Vector<Order> EmployeeOrdersInProgress = new Vector<Order>();	//< Holds the non-paid orders for the logged in employee
-	private Vector<Order> EmployeeOrdersPaid = new Vector<Order>();	//< Holds the completed orders for the logged in employee
-	private Vector<Vector<String>> AllOrdersTableData = new Vector<Vector<String>>(); 							//< Holds the row data for the ViewAllOrders table
+	private static Vector<Order> AllOrdersInProgress = new Vector<Order>(); //< Holds every order for all employees in DB
+	private static Vector<Order> EmployeeOrdersInProgress = new Vector<Order>();	//< Holds the non-paid orders for the logged in employee
+	private static Vector<Order> EmployeeOrdersPaid = new Vector<Order>();	//< Holds the completed orders for the logged in employee
+	private static Vector<Vector<String>> AllOrdersTableData = new Vector<Vector<String>>(); 							//< Holds the row data for the ViewAllOrders table
 	//private Object[][] ViewOrderTableData;						//< Holds the row data for the ViewOrder table
 	
-
 	private String employeeName;
+	private static String loggedInPIN;
 
 	/**
 	 * Create the frame.
 	 */
-	public OrdersView( Employee loggedInEmployee, String loggedInPIN ) {
+	public OrdersView( Employee loggedInEmployee, String employeePIN ) {
 		
-		columnNamesAllOrders.add("TABLE");
-		columnNamesAllOrders.add("ORDER DESCRIPTION");
-		columnNamesAllOrders.add("TOTAL");
+		loggedInPIN = employeePIN;
 
 		employeeName = loggedInEmployee.getFullName();
 		
 		//Get the orders for the logged in employee								
 		try {
-					
+
 			AllOrdersInProgress = Order.getAllOrders(); //< First get the entered orders
-			
+
 			// Find the Entered Orders that correspond to the logged in employee
 			for(int i = 0; i < AllOrdersInProgress.size(); i++){
-				
+
 				Order curOrder = AllOrdersInProgress.elementAt(i);
-						
+
 				// Match the order's PIN with the Logged in Employee
 				if ( curOrder.getEmployeePin() == Integer.parseInt(loggedInPIN) )
 				{
 					EmployeeOrdersInProgress.add(curOrder);
-					
+
 					Vector<String> order = new Vector<String>();
-					
+
 					order.add( Integer.toString(curOrder.getTableNumber()) );
 					order.add( curOrder.getItems() );
 					order.add( Double.toString(curOrder.getTotal()) );
-					
+
 					AllOrdersTableData.add(order);
 				}
 			}
@@ -123,9 +123,13 @@ public class OrdersView extends JFrame {
 			return ;
 		}
 		
+		columnNamesAllOrders.add("TABLE");
+		columnNamesAllOrders.add("ORDER DESCRIPTION");
+		columnNamesAllOrders.add("TOTAL");
+		
 		setTitle("Steve's Depot Diner");
-	
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		setBounds(100, 100, 884, 677);
 		contentPaneOrders = new JPanel();
 		contentPaneOrders.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -154,8 +158,8 @@ public class OrdersView extends JFrame {
 			gl_contentPaneOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_contentPaneOrders.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblEmployee, GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
-					.addGap(18)
+					.addComponent(lblEmployee, GroupLayout.DEFAULT_SIZE, 662, Short.MAX_VALUE)
+					.addGap(114)
 					.addComponent(btnExit, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
 					.addGap(14))
 				.addComponent(tabbedPaneOrders, GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
@@ -228,13 +232,13 @@ public class OrdersView extends JFrame {
 				
 				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
 					System.out.println("Opening Breakfast Menu!");
-					BreakfastView breakfast = new BreakfastView();
+					BreakfastView breakfast = new BreakfastView( loggedInPIN );
 					breakfast.setVisible(true);
 					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
 				else{
 					System.out.println("Opening Dinner Menu!");
-					DinnerView dinner = new DinnerView();
+					DinnerView dinner = new DinnerView( loggedInPIN );
 					dinner.setVisible(true);
 					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}	
@@ -306,8 +310,8 @@ public class OrdersView extends JFrame {
 		
 		//calcColumnWidths( tableViewOrder );
 		
-		TableColumnModel columns = tableViewOrder.getColumnModel();
-		TableColumn column = columns.getColumn(1);
+		columns = tableViewOrder.getColumnModel();
+		column = columns.getColumn(1);
 		column.setMinWidth(250);
 		column.setMaxWidth(450);
 		
@@ -329,13 +333,13 @@ public class OrdersView extends JFrame {
 				Calendar calendar = Calendar.getInstance();
 				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
 					System.out.println("Opening Breakfast Menu!");
-					BreakfastView breakfast = new BreakfastView();
+					BreakfastView breakfast = new BreakfastView( loggedInPIN );
 					breakfast.setVisible(true);
-					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
+					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);					
 				}
 				else{
 					System.out.println("Opening Dinner Menu!");
-					DinnerView dinner = new DinnerView();
+					DinnerView dinner = new DinnerView( loggedInPIN );
 					dinner.setVisible(true);
 					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}				
@@ -361,29 +365,47 @@ public class OrdersView extends JFrame {
 		});
 		btnHistory.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
+		JButton btnRefresh = new JButton("REFRESH");
+		btnRefresh.setMnemonic(KeyEvent.VK_R);
+		
+				btnRefresh.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						RefreshTableData();
+					}
+				});
+				btnRefresh.setMnemonic(KeyEvent.VK_X);
+				btnRefresh.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		
 		GroupLayout gl_desktopPaneAllOrders = new GroupLayout(desktopPaneAllOrders);
 		gl_desktopPaneAllOrders.setHorizontalGroup(
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, gl_desktopPaneAllOrders.createSequentialGroup()
-							.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 190, Short.MAX_VALUE)
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
+							.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 144, Short.MAX_VALUE)
 							.addGap(18)
-							.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 193, Short.MAX_VALUE))
-						.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE))
-					.addGap(8))
+							.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 81, Short.MAX_VALUE)
+							.addGap(18)
+							.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 142, Short.MAX_VALUE))
+						.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		gl_desktopPaneAllOrders.setVerticalGroup(
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.BASELINE)
-						.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
-					.addGap(7))
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
+							.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+								.addComponent(btnCreateOrder, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
+							.addGap(7))
+						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
+							.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap())))
 		);
 		
 		
@@ -441,61 +463,47 @@ public class OrdersView extends JFrame {
 		contentPaneOrders.setLayout(gl_contentPaneOrders);
 	}
 	
-	/*
-	public static void calcColumnWidths(JTable table)
+	private static void RefreshTableData()
 	{
-	    JTableHeader header = table.getTableHeader();
+		AllOrdersTableData.removeAllElements();
 
-	    TableCellRenderer defaultHeaderRenderer = null;
+		//Get the orders for the logged in employee								
+		try {
+		
+			AllOrdersInProgress = Order.getAllOrders(); //< First get the entered orders
 
-	    if (header != null)
-	        defaultHeaderRenderer = header.getDefaultRenderer();
+			// Find the Entered Orders that correspond to the logged in employee
+			for(int i = 0; i < AllOrdersInProgress.size(); i++){
 
-	    TableColumnModel columns = table.getColumnModel();
-	    TableModel data = table.getModel();
+				Order curOrder = AllOrdersInProgress.elementAt(i);
 
-	    int margin = columns.getColumnMargin(); 
+				// Match the order's PIN with the Logged in Employee
+				if ( curOrder.getEmployeePin() == Integer.parseInt(loggedInPIN) )
+				{
+					EmployeeOrdersInProgress.add(curOrder);
 
-	    int rowCount = data.getRowCount();
+					Vector<String> order = new Vector<String>();
 
-	    for (int i = columns.getColumnCount() - 1; i >= 0; --i)
-	    {
-	        TableColumn column = columns.getColumn(i);
-	            
-	        int columnIndex = column.getModelIndex();
-	            
-	        int width = -1; 
+					order.add( Integer.toString(curOrder.getTableNumber()) );
+					order.add( curOrder.getItems() );
+					order.add( Double.toString(curOrder.getTotal()) );
 
-	        TableCellRenderer h = column.getHeaderRenderer();
-	          
-	        if (h == null)
-	            h = defaultHeaderRenderer;
-	            
-	        if (h != null) 
-	        {
-	            Component c = h.getTableCellRendererComponent
-	                   (table, column.getHeaderValue(),
-	                    false, false, -1, i);
-	                    
-	            width = c.getPreferredSize().width;
-	        }
-	       
-	        for (int row = rowCount - 1; row >= 0; --row)
-	        {
-	            TableCellRenderer r = table.getCellRenderer(row, i);
-	                 
-	            Component c = r.getTableCellRendererComponent
-	               (table,
-	                data.getValueAt(row, columnIndex),
-	                false, false, row, i);
-	        
-	                width = Math.max(width, c.getPreferredSize().width);
-	        }
-
-	        if (width >= 0)
-	        {
-	            column.setPreferredWidth(width + margin); 
-	        }
-	    }
-	}*/
+					AllOrdersTableData.add(order);
+				}
+			}
+		} catch (Exception e) {
+			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
+			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return ;
+		}
+		
+	    ((DefaultTableModel) tableAllOrders.getModel()).setDataVector( AllOrdersTableData, columnNamesAllOrders); // Sets the data in the View Order table
+	    columns = tableAllOrders.getColumnModel();
+		column = columns.getColumn(0);
+		column.setMinWidth(60);
+		column.setMaxWidth(100);
+		column = columns.getColumn(2);
+		column.setMinWidth(130);
+		column.setMaxWidth(250);
+	}
 }
