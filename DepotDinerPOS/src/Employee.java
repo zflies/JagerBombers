@@ -123,7 +123,7 @@ public class Employee {
 		}
 		else
 			System.err.println("Statement was null.  No connection?");
-		
+		state.close();
 		return new Employee(firstname, lastname, position, type);
 	}
 	

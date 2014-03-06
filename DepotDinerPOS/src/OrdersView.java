@@ -63,9 +63,7 @@ public class OrdersView extends JFrame {
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
 	private JDialog dialogHistory;
-	private int nTempCount = 0;		//< Temporary until the DB connection is worked out
-
-	
+		
 	private static final int BREAKFAST_HOUR = 11;
 	
 	private Calendar calendar = Calendar.getInstance();
@@ -319,6 +317,7 @@ public class OrdersView extends JFrame {
 		column = columns.getColumn(2);
 		column.setMinWidth(130);
 		column.setMaxWidth(250);
+
 		tableViewOrder.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		tableViewOrder.setRowHeight(tableViewOrder.getRowHeight() + 20);
 			
@@ -327,6 +326,7 @@ public class OrdersView extends JFrame {
 		
 		btnCreateOrder = new JButton("CREATE ORDER");
 		btnCreateOrder.setMnemonic(KeyEvent.VK_C);
+
 		btnCreateOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Calendar calendar = Calendar.getInstance();
@@ -399,17 +399,17 @@ public class OrdersView extends JFrame {
 			}
 		});
 		
+
 		tableAllOrders.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 	        public void valueChanged(ListSelectionEvent event) {
 	           	            
 	            // TODO: Update View Order table based on All Orders table selection
 	            
 	            // tableAllOrders.getValueAt(tableAllOrders.getSelectedRow(), 0).toString() // Retrieves row selctions from All Orders table
-	        	if ( nTempCount > 0)	
-	        	{
-		            ((DefaultTableModel) tableViewOrder.getModel()).setDataVector( rowDataViewOrderTable7, columnNamesViewOrder); // Sets the data in the View Order table
-	        	}
-	        	nTempCount++;
+
+
+			    ((DefaultTableModel) tableViewOrder.getModel()).setDataVector( rowDataViewOrderTable7, columnNamesViewOrder); // Sets the data in the View Order table
+
 	        }
 	    });
 		
