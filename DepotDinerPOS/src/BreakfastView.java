@@ -76,10 +76,10 @@ public class BreakfastView extends JFrame {
 		btnCancel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				OrdersView ordersView = new OrdersView();
-				ordersView.setVisible(true);
-				ordersView.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				dispose();
+				//OrdersView ordersView = new OrdersView();
+				//ordersView.setVisible(true);
+				//ordersView.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				//dispose();
 			}
 		});
 		btnCancel.setForeground(Color.BLACK);

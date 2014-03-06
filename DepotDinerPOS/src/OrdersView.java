@@ -8,6 +8,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import java.awt.Font;
@@ -38,6 +39,7 @@ import javax.swing.table.TableModel;
 import javax.swing.JDesktopPane;
 
 import java.util.Calendar;
+import java.util.Vector;
 
 
 public class OrdersView extends JFrame {
@@ -53,78 +55,73 @@ public class OrdersView extends JFrame {
 	private JButton btnCreateOrder;
 	private JButton btnPayment;
 	private JButton btnAddToOrder;
+	private JButton btnHistory;
 	private JScrollPane scrollPaneAllOrders;
 	private JLabel lblTable;
 	private JLabel lblTotal;
 	private JLabel lblTableNumber;
 	private JScrollPane scrollPaneViewOrder;
-	private JList list;
 	private JTable tableAllOrders;
 	private JTable tableViewOrder;
 	private JDialog dialogPayment;
 	private JDialog dialogHistory;
-		
+
 	private static final int BREAKFAST_HOUR = 11;
 	
 	private Calendar calendar = Calendar.getInstance();
 
-	private Object columnNamesViewOrder[] = {"Item", "Notes", "Price"};
+	private Object columnNamesViewOrder[] = {"Item", "Notes", "Price"};					//< Column Names for the View Order table
+	private Vector<String> columnNamesAllOrders = new Vector<String>();	//< Column Names for the View All Orders table
 
-	private Object rowDataViewOrderTable4 [][] = {
-			{"Chicken Strips", "Honey Mustard", "$7.50"}, 
-			{"KC Strip","","$12.95"},
-			{"Chicken Parmesan ","No Mushrooms","$9.50"},
-			{"Iced Tea","","$2.45"},
-			{"Iced Tea","","$2.45"},
-			{"Drink","","$1.50"}};
+	private Vector<Order> AllOrdersInProgress = new Vector<Order>(); //< Holds every order for all employees in DB
+	private Vector<Order> EmployeeOrdersInProgress = new Vector<Order>();	//< Holds the non-paid orders for the logged in employee
+	private Vector<Order> EmployeeOrdersPaid = new Vector<Order>();	//< Holds the completed orders for the logged in employee
+	private Vector<Vector<String>> AllOrdersTableData = new Vector<Vector<String>>(); 							//< Holds the row data for the ViewAllOrders table
+	//private Object[][] ViewOrderTableData;						//< Holds the row data for the ViewOrder table
 	
-	private Object rowDataViewOrderTable7 [][] = {
-			{"Meat Loaf", "", "$8.95"}, 
-			{"Country Fried Steak","","$9.85"},
-			{"Catfish and Chips","Extra Sauce","$8.50"},
-			{"Iced Tea","","$2.45"},
-			{"Drink","","$1.50"}};
-	
-	private Object rowDataViewOrderTable10 [][] = {
-			{"Southwest Omelette", "Extra Cheese", "$7.95"}, 
-			{"8oz. KC Strip & Eggs","","$10.15"},
-			{"Milk","","$1.75"},
-			{"Drink","","$1.50"},
-			{"Coffee","","$2.50"}};
-	
-	
-	private Object rowDataAllOrders[][] = { 
-			{ "10", "Southwest Omelette, 8oz. KC Strip & Eggs, Milk, Soft Drink, Coffee", "$23.95"},
-			{ "7", "Meat Loaf, Country Fried Steak, Catfish and Chips, Iced Tea, Soft Drink", "$29.86"},
-			{ "4", "Chicken Strips, KC Strip, Chicken Parmesan, Iced Tea, Iced, Tea, Soft Drink", "$21.14"}};
 
-	private Object columnNamesAllOrders[] = { "TABLE", "ORDER DESCRIPTION", "TOTAL"};
-	private JButton btnHistory;
-
-
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					frame = new OrdersView();
-					frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-					frame.setVisible(true);
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	private String employeeName;
 
 	/**
 	 * Create the frame.
 	 */
-	public OrdersView() {
+	public OrdersView( Employee loggedInEmployee, String loggedInPIN ) {
+		
+		columnNamesAllOrders.add("TABLE");
+		columnNamesAllOrders.add("ORDER DESCRIPTION");
+		columnNamesAllOrders.add("TOTAL");
+
+		employeeName = loggedInEmployee.getFullName();
+		
+		//Get the orders for the logged in employee								
+		try {
+					
+			AllOrdersInProgress = Order.getAllOrders(); //< First get the entered orders
+			
+			// Find the Entered Orders that correspond to the logged in employee
+			for(int i = 0; i < AllOrdersInProgress.size(); i++){
+				
+				Order curOrder = AllOrdersInProgress.elementAt(i);
+						
+				// Match the order's PIN with the Logged in Employee
+				if ( curOrder.getEmployeePin() == Integer.parseInt(loggedInPIN) )
+				{
+					EmployeeOrdersInProgress.add(curOrder);
+					
+					Vector<String> order = new Vector<String>();
+					
+					order.add( Integer.toString(curOrder.getTableNumber()) );
+					order.add( curOrder.getItems() );
+					order.add( Double.toString(curOrder.getTotal()) );
+					
+					AllOrdersTableData.add(order);
+				}
+			}
+		} catch (Exception e) {
+			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
+			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return ;
+		}
 		
 		setTitle("Steve's Depot Diner");
 	
@@ -147,7 +144,7 @@ public class OrdersView extends JFrame {
 		});
 		btnExit.setFont(new Font("Lucida Grande", Font.PLAIN, 16));
 		
-		lblEmployee = new JLabel("EMPLOYEE:  ZACH FLIES");
+		lblEmployee = new JLabel("Employee: " + employeeName);
 		lblEmployee.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		lblEmployee.setHorizontalAlignment(SwingConstants.LEFT);
 		
@@ -296,9 +293,9 @@ public class OrdersView extends JFrame {
 		);
 		
 		
+		Object temp[][] = {{"Test", "Test", "Test"}};	
 		
-				
-		tableViewOrder = new JTable(new DefaultTableModel(rowDataViewOrderTable10, columnNamesViewOrder) {
+		tableViewOrder = new JTable(new DefaultTableModel( temp, columnNamesViewOrder ) {
 			boolean[] columnEditables = new boolean[] {
 					false, false, false
 			};
@@ -307,7 +304,7 @@ public class OrdersView extends JFrame {
 			}
 		});
 		
-		calcColumnWidths( tableViewOrder );
+		//calcColumnWidths( tableViewOrder );
 		
 		TableColumnModel columns = tableViewOrder.getColumnModel();
 		TableColumn column = columns.getColumn(1);
@@ -389,8 +386,9 @@ public class OrdersView extends JFrame {
 					.addGap(7))
 		);
 		
+		
 	
-		tableAllOrders = new JTable(new DefaultTableModel(rowDataAllOrders, columnNamesAllOrders) {
+		tableAllOrders = new JTable(new DefaultTableModel(AllOrdersTableData, columnNamesAllOrders) {
 			boolean[] columnEditables = new boolean[] {
 				false, false, false
 			};
@@ -405,15 +403,24 @@ public class OrdersView extends JFrame {
 	           	            
 	            // TODO: Update View Order table based on All Orders table selection
 	            
-	            // tableAllOrders.getValueAt(tableAllOrders.getSelectedRow(), 0).toString() // Retrieves row selctions from All Orders table
-
-
-			    ((DefaultTableModel) tableViewOrder.getModel()).setDataVector( rowDataViewOrderTable7, columnNamesViewOrder); // Sets the data in the View Order table
+	            //int index = Integer.parseInt(tableAllOrders.getValueAt(tableAllOrders.getSelectedRow(), 0).toString()); // Retrieves row selctions from All Orders table
+	            
+	            //Order curOrder = EmployeeOrdersInProgress.get(index);
+	            
+	            //String items = curOrder.getItems();
+	            
+	            // TODO: parse each item, maybe a delimiter by ',' ?
+	            
+	            //ViewOrderTableData = new Object[ EmployeeOrdersInProgress.size() ][3];
+	            
+	            
+	            
+			    //((DefaultTableModel) tableViewOrder.getModel()).setDataVector( ViewOrderTableData, columnNamesViewOrder); // Sets the data in the View Order table
 
 	        }
 	    });
 		
-		calcColumnWidths( tableAllOrders);
+		//calcColumnWidths( tableAllOrders);
 		
 		columns = tableAllOrders.getColumnModel();
 		column = columns.getColumn(0);
@@ -434,6 +441,7 @@ public class OrdersView extends JFrame {
 		contentPaneOrders.setLayout(gl_contentPaneOrders);
 	}
 	
+	/*
 	public static void calcColumnWidths(JTable table)
 	{
 	    JTableHeader header = table.getTableHeader();
@@ -489,5 +497,5 @@ public class OrdersView extends JFrame {
 	            column.setPreferredWidth(width + margin); 
 	        }
 	    }
-	}
+	}*/
 }

@@ -41,8 +41,15 @@ public class DBConnection {
 			System.err.println("Error: " + e1.getMessage());
 			System.err.println("Please place config.txt under your project Root folder.");
 		}
+		
 		//String url = "jdbc:mysql://" + configURL + username; //server + database string
-		String url = "jdbc:mysql://localhost/" + username; //***This is connecting to the local MySQL server
+		//String url = "jdbc:mysql://localhost/" + username; //***This is connecting to the local MySQL server
+
+		/* This is for Zach */
+		username = "root";
+		password = "";
+		String url = "jdbc:mysql://localhost/" + "avalenti"; 
+	        
 		Statement stmt = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");

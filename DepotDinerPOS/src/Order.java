@@ -87,6 +87,38 @@ public class Order {
 		this.State = newStatus;
 	}
 	
+	public static Vector<Order> getAllOrders() {
+		
+		Vector<Order> OrderVector = new Vector<Order>();
+		Vector<Order> TempVector = new Vector<Order>();
+		
+		try {
+			TempVector = getEnteredOrders();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i< TempVector.size(); i++)
+		{
+			OrderVector.add(TempVector.get(i));
+		}
+		
+		try {
+			TempVector = getServedOrders();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		for (int i = 0; i< TempVector.size(); i++)
+		{
+			OrderVector.add(TempVector.get(i));
+		}
+		
+		return OrderVector;
+	}
+	
 	public static Vector<Order> getEnteredOrders() throws Exception{
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();

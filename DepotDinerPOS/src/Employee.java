@@ -57,7 +57,7 @@ public class Employee {
 	public String getLastName(){
 		return LastName;
 	}
-	
+		
 	public EmployeeType getEmployeeType(){
 		return EType;
 	}

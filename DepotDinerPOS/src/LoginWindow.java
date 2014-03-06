@@ -95,7 +95,7 @@ public class LoginWindow extends JFrame {
 				if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Staff){
 					//open orders window
 					System.out.println("Opening Orders Window!");
-					OrdersView Orders = new OrdersView();
+					OrdersView Orders = new OrdersView(loggedInEmployee, pin);
 					Orders.setVisible(true);
 					Orders.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
@@ -109,7 +109,7 @@ public class LoginWindow extends JFrame {
 				else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Manager){
 					//open manager window
 					System.out.println("Opening Manager Window!");
-					ManageView Manage = new ManageView();
+					ManageView Manage = new ManageView(loggedInEmployee, pin);
 					Manage.setVisible(true);
 					Manage.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}

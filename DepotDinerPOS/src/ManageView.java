@@ -26,11 +26,14 @@ public class ManageView extends JFrame {
 	private JPanel contentPane;
 	private JDialog dialogAddEmployee;
 	private static ManageView frame;
+	
+	private String employeeName;
 
 
 	/**
 	 * Launch the application.
 	 */
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -43,11 +46,15 @@ public class ManageView extends JFrame {
 			}
 		});
 	}
+	*/
 
 	/**
 	 * Create the frame.
 	 */
-	public ManageView() {
+	public ManageView( Employee loggedInEmployee, String loggedInPIN ) {
+		
+		employeeName = loggedInEmployee.getFullName();
+		
 		setTitle("Steven's Depot Diner");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 887, 544);
@@ -57,7 +64,7 @@ public class ManageView extends JFrame {
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		
-		JLabel lblEmployee = new JLabel("Employee: ");
+		JLabel lblEmployee = new JLabel("Employee: " + employeeName);
 		lblEmployee.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
 		JButton btnExit = new JButton("Exit");
