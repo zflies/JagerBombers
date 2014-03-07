@@ -32,7 +32,7 @@ public class ManageView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public ManageView( Employee loggedInEmployee, String loggedInPIN ) {
+	public ManageView( Employee loggedInEmployee ) {
 		
 		employeeName = loggedInEmployee.getFullName();
 		
