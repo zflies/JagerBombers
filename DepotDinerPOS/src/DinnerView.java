@@ -44,7 +44,7 @@ private DecimalFormat df = new DecimalFormat("#.00");
 /**
 * Create the frame.
 */
-public DinnerView( final String employeePIN ) {
+public DinnerView( final Employee loggedInEmployee ) {
 	setTitle("Steve's Depot Diner");
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
 	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -71,10 +71,13 @@ public DinnerView( final String employeePIN ) {
 	btnCreate = new JButton("Create");
 	btnCreate.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
+			
+			String employeePIN = "(SELECT PIN FROM Employees WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+															"AND LastName = '" + loggedInEmployee.getLastName() + "')";
 			int tableNumber = tableNumberComboBox.getSelectedIndex() + 1;
 			String itemsCSV = createOrderCSV();
 			double totalPrice = getCurrentTotal();
-			String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES ('%s', '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
+			String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES (%s, '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
 			placeOrder(query);
 			dispose();
 		}

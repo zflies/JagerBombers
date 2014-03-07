@@ -38,7 +38,7 @@ public class BreakfastView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public BreakfastView( final String employeePIN ) {
+	public BreakfastView( final Employee loggedInEmployee ) {
 		setTitle("Steve's Depot Diner");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -73,10 +73,12 @@ public class BreakfastView extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Go through all rows in ordersTable and get the itemName, notes (if any) and itemprice
 				//Form query consisting of Employee PIN, Table No, items/notes (as CSV), status = entered, and totalprice
+				String employeePIN = "(SELECT PIN FROM Employees WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+																"AND LastName = '" + loggedInEmployee.getLastName() + "')";
 				int tableNumber = tableNumberComboBox.getSelectedIndex() + 1;
 				String itemsCSV = createOrderCSV();
 				double totalPrice = getCurrentTotal();
-				String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES ('%s', '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
+				String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES (%s, '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
 				placeOrder(query);
 				dispose();
 			}

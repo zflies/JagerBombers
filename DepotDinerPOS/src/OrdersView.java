@@ -75,47 +75,37 @@ public class OrdersView extends JFrame {
 	private Object columnNamesViewOrder[] = {"Item", "Notes", "Price"};					//< Column Names for the View Order table
 	private static Vector<String> columnNamesAllOrders = new Vector<String>();	//< Column Names for the View All Orders table
 
-	private static Vector<Order> AllOrdersInProgress = new Vector<Order>(); //< Holds every order for all employees in DB
-	private static Vector<Order> EmployeeOrdersInProgress = new Vector<Order>();	//< Holds the non-paid orders for the logged in employee
-	private static Vector<Order> EmployeeOrdersPaid = new Vector<Order>();	//< Holds the completed orders for the logged in employee
-	private static Vector<Vector<String>> AllOrdersTableData = new Vector<Vector<String>>(); 							//< Holds the row data for the ViewAllOrders table
-	//private Object[][] ViewOrderTableData;						//< Holds the row data for the ViewOrder table
+	private static Vector<Order> EmployeeAllOrders = new Vector<Order>(); //< Holds every order for all employees in DB
+	private static Vector<Order> EmployeePaidOrders = new Vector<Order>();	//< Holds the completed orders for the logged in employee
+	private static Vector<Vector<String>> EmployeeAllOrdersTableData = new Vector<Vector<String>>(); //< Holds the row data for the ViewAllOrders table
+	//private Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
 	
 	private String employeeName;
-	private static String loggedInPIN;
 
 	/**
 	 * Create the frame.
 	 */
-	public OrdersView( Employee loggedInEmployee, String employeePIN ) {
+	public OrdersView( final Employee loggedInEmployee ) {
 		
-		loggedInPIN = employeePIN;
-
 		employeeName = loggedInEmployee.getFullName();
 		
 		//Get the orders for the logged in employee								
 		try {
 
-			AllOrdersInProgress = Order.getAllOrders(); //< First get the entered orders
+			EmployeeAllOrders = Order.getEmployeeOrdersInProgress( loggedInEmployee ); //< First get the entered orders
 
-			// Find the Entered Orders that correspond to the logged in employee
-			for(int i = 0; i < AllOrdersInProgress.size(); i++){
+			// Find all entered and served orders that correspond to the logged in employee
+			for(int i = 0; i < EmployeeAllOrders.size(); i++){
 
-				Order curOrder = AllOrdersInProgress.elementAt(i);
+				Order curOrder = EmployeeAllOrders.elementAt(i);
 
-				// Match the order's PIN with the Logged in Employee
-				if ( curOrder.getEmployeePin() == Integer.parseInt(loggedInPIN) )
-				{
-					EmployeeOrdersInProgress.add(curOrder);
+				Vector<String> order = new Vector<String>();
 
-					Vector<String> order = new Vector<String>();
+				order.add( Integer.toString(curOrder.getTableNumber()) );
+				order.add( curOrder.getItems() );
+				order.add( Double.toString(curOrder.getTotal()) );
 
-					order.add( Integer.toString(curOrder.getTableNumber()) );
-					order.add( curOrder.getItems() );
-					order.add( Double.toString(curOrder.getTotal()) );
-
-					AllOrdersTableData.add(order);
-				}
+				EmployeeAllOrdersTableData.add(order);
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
@@ -232,13 +222,13 @@ public class OrdersView extends JFrame {
 				
 				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
 					System.out.println("Opening Breakfast Menu!");
-					BreakfastView breakfast = new BreakfastView( loggedInPIN );
+					BreakfastView breakfast = new BreakfastView( loggedInEmployee );
 					breakfast.setVisible(true);
 					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}
 				else{
 					System.out.println("Opening Dinner Menu!");
-					DinnerView dinner = new DinnerView( loggedInPIN );
+					DinnerView dinner = new DinnerView( loggedInEmployee );
 					dinner.setVisible(true);
 					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}	
@@ -333,13 +323,13 @@ public class OrdersView extends JFrame {
 				Calendar calendar = Calendar.getInstance();
 				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
 					System.out.println("Opening Breakfast Menu!");
-					BreakfastView breakfast = new BreakfastView( loggedInPIN );
+					BreakfastView breakfast = new BreakfastView( loggedInEmployee );
 					breakfast.setVisible(true);
 					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);					
 				}
 				else{
 					System.out.println("Opening Dinner Menu!");
-					DinnerView dinner = new DinnerView( loggedInPIN );
+					DinnerView dinner = new DinnerView( loggedInEmployee );
 					dinner.setVisible(true);
 					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
 				}				
@@ -370,7 +360,7 @@ public class OrdersView extends JFrame {
 		
 				btnRefresh.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						RefreshTableData();
+						RefreshTableData( loggedInEmployee );
 					}
 				});
 				btnRefresh.setMnemonic(KeyEvent.VK_X);
@@ -410,7 +400,7 @@ public class OrdersView extends JFrame {
 		
 		
 	
-		tableAllOrders = new JTable(new DefaultTableModel(AllOrdersTableData, columnNamesAllOrders) {
+		tableAllOrders = new JTable(new DefaultTableModel(EmployeeAllOrdersTableData, columnNamesAllOrders) {
 			boolean[] columnEditables = new boolean[] {
 				false, false, false
 			};
@@ -463,33 +453,27 @@ public class OrdersView extends JFrame {
 		contentPaneOrders.setLayout(gl_contentPaneOrders);
 	}
 	
-	private static void RefreshTableData()
+	private static void RefreshTableData( Employee loggedInEmployee )
 	{
-		AllOrdersTableData.removeAllElements();
+		EmployeeAllOrdersTableData.removeAllElements();
 
 		//Get the orders for the logged in employee								
 		try {
 		
-			AllOrdersInProgress = Order.getAllOrders(); //< First get the entered orders
+			EmployeeAllOrders = Order.getEmployeeOrdersInProgress( loggedInEmployee ); //< First get the entered orders
 
-			// Find the Entered Orders that correspond to the logged in employee
-			for(int i = 0; i < AllOrdersInProgress.size(); i++){
+			// Find all entered and served orders that correspond to the logged in employee
+			for(int i = 0; i < EmployeeAllOrders.size(); i++){
 
-				Order curOrder = AllOrdersInProgress.elementAt(i);
+				Order curOrder = EmployeeAllOrders.elementAt(i);
 
-				// Match the order's PIN with the Logged in Employee
-				if ( curOrder.getEmployeePin() == Integer.parseInt(loggedInPIN) )
-				{
-					EmployeeOrdersInProgress.add(curOrder);
+				Vector<String> order = new Vector<String>();
 
-					Vector<String> order = new Vector<String>();
+				order.add( Integer.toString(curOrder.getTableNumber()) );
+				order.add( curOrder.getItems() );
+				order.add( Double.toString(curOrder.getTotal()) );
 
-					order.add( Integer.toString(curOrder.getTableNumber()) );
-					order.add( curOrder.getItems() );
-					order.add( Double.toString(curOrder.getTotal()) );
-
-					AllOrdersTableData.add(order);
-				}
+				EmployeeAllOrdersTableData.add(order);
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
@@ -497,7 +481,7 @@ public class OrdersView extends JFrame {
 			return ;
 		}
 		
-	    ((DefaultTableModel) tableAllOrders.getModel()).setDataVector( AllOrdersTableData, columnNamesAllOrders); // Sets the data in the View Order table
+	    ((DefaultTableModel) tableAllOrders.getModel()).setDataVector( EmployeeAllOrdersTableData, columnNamesAllOrders); // Sets the data in the View Order table
 	    columns = tableAllOrders.getColumnModel();
 		column = columns.getColumn(0);
 		column.setMinWidth(60);

@@ -87,42 +87,58 @@ public class Order {
 		this.State = newStatus;
 	}
 	
-	public static Vector<Order> getAllOrders() {
+/**
+ * Returns all orders for the logged in employee that have a status of entered or served.
+ * @param loggedInEmployee
+ * @return OrderVector
+ * @throws Exception
+ */
+	public static Vector<Order> getEmployeeOrdersInProgress( Employee loggedInEmployee ) throws Exception {
 		
 		Vector<Order> OrderVector = new Vector<Order>();
-		Vector<Order> TempVector = new Vector<Order>();
-		
-		try {
-			TempVector = getServedOrders();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+		Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM Orders WHERE Status = 'entered' OR Status = 'servered' " +
+							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
+							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
+		int ID = 0;
+		int E_PIN = 0;
+		int Table_No = 0;
+		String Items = "";
+		String Status = "";
+		double Total = 0.0;
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				while(rs.next()) {
+					ID = rs.getInt("ID");
+					E_PIN = rs.getInt("E_PIN");
+					Table_No = rs.getInt("Table_No");
+					Items = rs.getString("Items");
+					Status = rs.getString("Status");
+					Total = rs.getDouble("Total");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					OrderVector.add(new_order);
+				}
+				if(OrderVector.size() == 0) {
+					throw new Exception("No Pending Orders");
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Error in SQL Execution");
+				}
 		}
+		else
+			System.err.println("Statement was null.  No connection?");
 		
-		for (int i = 0; i< TempVector.size(); i++)
-		{
-			OrderVector.add(TempVector.get(i));
-		}
-		
-		try {
-			TempVector = getEnteredOrders();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		for (int i = 0; i< TempVector.size(); i++)
-		{
-			OrderVector.add(TempVector.get(i));
-		}
-		
+		state.close();
 		return OrderVector;
 	}
 	
 	public static Vector<Order> getEnteredOrders() throws Exception{
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'entered';";
+		String commandstring = "SELECT * FROM Orders WHERE Status = 'entered'; ";//AND E_PIN = {SELECT PIN FROM Employee WHERE FirstName = fname AND LastName = lastname;};";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
