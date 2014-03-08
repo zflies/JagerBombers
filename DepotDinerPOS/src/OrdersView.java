@@ -421,8 +421,14 @@ public class OrdersView extends JFrame {
 	        public void valueChanged(ListSelectionEvent event) {
 	           	            
 	            // Update View Order table based on All Orders table selection
-	            	            
-	            Order curOrder = EmployeeAllOrders.get( tableAllOrders.getSelectedRow() );
+	        	int temp = tableAllOrders.getSelectedRow();
+	        	
+	        	if (temp < 0 )
+	        	{
+	        		return;
+	        	}	            
+	        	
+	            Order curOrder = EmployeeAllOrders.get( temp );
 	            
 	            lblTableNumber.setText( String.valueOf( curOrder.getTableNumber() ) );
 	            lblTotal.setText( "Total: $" + String.valueOf( curOrder.getTotal() ) );
@@ -485,7 +491,7 @@ public class OrdersView extends JFrame {
 	
 	private static void RefreshTableData( Employee loggedInEmployee )
 	{
-		//EmployeeAllOrdersTableData.removeAllElements();
+		EmployeeAllOrdersTableData.clear();
 
 		//Get the orders for the logged in employee								
 		try {
@@ -511,8 +517,8 @@ public class OrdersView extends JFrame {
 			return ;
 		}
 		
-		((DefaultTableModel) tableAllOrders.getModel()).setDataVector(EmployeeAllOrdersTableData, columnNamesAllOrders);
-		//((DefaultTableModel) tableAllOrders.getModel()).fireTableDataChanged();
+		//((DefaultTableModel) tableAllOrders.getModel()).setDataVector(EmployeeAllOrdersTableData, columnNamesAllOrders);
+		((DefaultTableModel) tableAllOrders.getModel()).fireTableDataChanged();
 	    columns = tableAllOrders.getColumnModel();
 		column = columns.getColumn(0);
 		column.setMinWidth(60);
