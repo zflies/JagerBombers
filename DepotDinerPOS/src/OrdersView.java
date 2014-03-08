@@ -80,7 +80,7 @@ public class OrdersView extends JFrame {
 	private static Vector<Order> EmployeePaidOrders = new Vector<Order>();	//< Holds the completed orders for the logged in employee
 	private static Vector<Vector<String>> EmployeeAllOrdersTableData = new Vector<Vector<String>>(); //< Holds the row data for the ViewAllOrders table
 	private Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
-	
+
 	private String employeeName;
 
 	/**
@@ -517,8 +517,9 @@ public class OrdersView extends JFrame {
 			return ;
 		}
 		
-		//((DefaultTableModel) tableAllOrders.getModel()).setDataVector(EmployeeAllOrdersTableData, columnNamesAllOrders);
+
 		((DefaultTableModel) tableAllOrders.getModel()).fireTableDataChanged();
+
 	    columns = tableAllOrders.getColumnModel();
 		column = columns.getColumn(0);
 		column.setMinWidth(60);
