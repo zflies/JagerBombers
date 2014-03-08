@@ -1,5 +1,7 @@
 import java.awt.EventQueue;
 import java.awt.Font;
+
+import javax.naming.Context;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,6 +17,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.SwingConstants;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -50,8 +53,10 @@ public class LoginWindow extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginWindow() {
+				
 		setTitle("Steve's Depot Diner");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		setBounds(100, 100, 554, 443);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -119,7 +124,7 @@ public class LoginWindow extends JFrame {
 					return;
 				}
 				frame.setVisible(false);
-				frame.dispose();
+				dispose();
 			}
 		});
 		btnSubmit.setFont(new Font("Lucida Grande", Font.PLAIN, 15));

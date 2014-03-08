@@ -38,8 +38,13 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.JDesktopPane;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Vector;
+
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 
@@ -80,6 +85,9 @@ public class OrdersView extends JFrame {
 	private static Vector<Order> EmployeePaidOrders = new Vector<Order>();	//< Holds the completed orders for the logged in employee
 	private static Vector<Vector<String>> EmployeeAllOrdersTableData = new Vector<Vector<String>>(); //< Holds the row data for the ViewAllOrders table
 	private Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
+	private ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage when passed to the Payments Dialog
+
+	private static DecimalFormat df = new DecimalFormat("#.00");
 
 	private String employeeName;
 
@@ -94,6 +102,8 @@ public class OrdersView extends JFrame {
 		try {
 
 			EmployeeAllOrders = Order.getEmployeeOrdersInProgress( loggedInEmployee ); //< First get the entered orders
+			
+			EmployeeAllOrdersTableData.clear();
 
 			// Find all entered and served orders that correspond to the logged in employee
 			for(int i = 0; i < EmployeeAllOrders.size(); i++){
@@ -104,7 +114,7 @@ public class OrdersView extends JFrame {
 
 				order.add( Integer.toString(curOrder.getTableNumber()) );
 				order.add( curOrder.getItems() );
-				order.add( Double.toString(curOrder.getTotal()) );
+				order.add( "$" + df.format( curOrder.getTotal()) );
 
 				EmployeeAllOrdersTableData.add(order);
 			}
@@ -114,10 +124,12 @@ public class OrdersView extends JFrame {
 			return ;
 		}
 		
+		columnNamesAllOrders.clear();
 		columnNamesAllOrders.add("TABLE");
 		columnNamesAllOrders.add("ORDER DESCRIPTION");
 		columnNamesAllOrders.add("TOTAL");
 		
+		columnNamesViewOrder.clear();
 		columnNamesViewOrder.add("ITEM");
 		columnNamesViewOrder.add("NOTES");
 		columnNamesViewOrder.add("PRICE");
@@ -209,13 +221,24 @@ public class OrdersView extends JFrame {
 		btnPayment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				dialogPayment = new PaymentsDialog();
+				int table = tableAllOrders.getSelectedRow();
+	        	
+	        	if (table < 0 )
+	        	{
+	        		return; // TODO: Show alert dialog that tells user to select a table first
+	        	}	            
+	        	
+	            Order curOrder = EmployeeAllOrders.get( table );
+	            
+				dialogPayment = new PaymentsDialog( curOrder, ItemCosts );
 				dialogPayment.setVisible(true);
 				
 				dialogPayment.setLocationRelativeTo(null);
-				dialogPayment.setTitle("TABLE" + lblTableNumber.getText() + "PAYMENT");
+				dialogPayment.setTitle("TABLE " + lblTableNumber.getText() + " PAYMENT");
 				
-				dialogPayment.setAlwaysOnTop(true);							
+				dialogPayment.setAlwaysOnTop(true);	
+				
+				//RefreshTableData( loggedInEmployee );
 			}
 		});
 		btnPayment.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -291,13 +314,16 @@ public class OrdersView extends JFrame {
 						.addComponent(btnPayment, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
-				
-		Vector<String> order = new Vector<String>();
-		order.add("");
-		order.add("");
-		order.add("");
-		EmployeeViewOrderTableData.add(order);
 		
+		if ( EmployeeViewOrderTableData.isEmpty() )
+		{
+			Vector<String> order = new Vector<String>();
+			order.add("");
+			order.add("");
+			order.add("");
+			EmployeeViewOrderTableData.add(order);
+		}
+
 		tableViewOrder = new JTable(new DefaultTableModel( EmployeeViewOrderTableData, columnNamesViewOrder ) {
 			boolean[] columnEditables = new boolean[] {
 					false, false, false
@@ -421,39 +447,51 @@ public class OrdersView extends JFrame {
 	        public void valueChanged(ListSelectionEvent event) {
 	           	            
 	            // Update View Order table based on All Orders table selection
-	        	int temp = tableAllOrders.getSelectedRow();
+	        	int table = tableAllOrders.getSelectedRow();
 	        	
-	        	if (temp < 0 )
+	        	if (table < 0 )
 	        	{
 	        		return;
 	        	}	            
 	        	
-	            Order curOrder = EmployeeAllOrders.get( temp );
+	            Order curOrder = EmployeeAllOrders.get( table );
 	            
 	            lblTableNumber.setText( String.valueOf( curOrder.getTableNumber() ) );
-	            lblTotal.setText( "Total: $" + String.valueOf( curOrder.getTotal() ) );
+	            lblTotal.setText( "Total: $" + df.format( curOrder.getTotal() ) );
 	            
 	            String items = curOrder.getItems();
 	            
 	            EmployeeViewOrderTableData.clear();
+	            ItemCosts.clear();
+	            
+	            String item = "";
+	            double cost = 0.0;
 	            
 	            int i = 0;
 	            for ( int j = 0; j < items.length(); j++ )
 	            {
 	            	if ( items.charAt(j) == ',' )
 	            	{
-	    	            Vector<String> curItem = new Vector<String>();
-	    	            curItem.add( items.substring(i, j) );
+	            		item = items.substring(i, j);
+	            		cost = getItemPrice( item );
+	            		ItemCosts.add( cost );
+	    	            Vector<String> curItem = new Vector<String>();  	            
+	    	            curItem.add( item );
 	    	            curItem.add(""); // TODO: Is there even a notes section for creating orders?
-	    	            curItem.add(""); // TODO: Query for item price?
+	    	            curItem.add( df.format( cost ) ); // TODO: Query for item price?
+	    	            
 	            		EmployeeViewOrderTableData.addElement( curItem );
 	            		i = j + 2;
 	            	}
 	            }
+	            
+	            item = items.substring(i);
+        		cost = getItemPrice( item );
+        		ItemCosts.add( cost );
 	            Vector<String> curItem = new Vector<String>();
-	            curItem.add( items.substring(i) );
+	            curItem.add( item );
 	            curItem.add(""); // TODO: Is there even a notes section for creating orders?
-	            curItem.add(""); // TODO: Query for item price?
+	            curItem.add( df.format( cost ) ); // TODO: Query for item price?
         		EmployeeViewOrderTableData.add( curItem );
 	           	            
 			    ((DefaultTableModel) tableViewOrder.getModel()).fireTableDataChanged(); // Sets the data in the View Order table
@@ -507,7 +545,7 @@ public class OrdersView extends JFrame {
 
 				order.add( Integer.toString(curOrder.getTableNumber()) );
 				order.add( curOrder.getItems() );
-				order.add( Double.toString(curOrder.getTotal()) );
+				order.add( df.format( curOrder.getTotal()) );
 
 				EmployeeAllOrdersTableData.add(order);
 			}
@@ -516,7 +554,6 @@ public class OrdersView extends JFrame {
 			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			return ;
 		}
-		
 
 		((DefaultTableModel) tableAllOrders.getModel()).fireTableDataChanged();
 
@@ -527,5 +564,27 @@ public class OrdersView extends JFrame {
 		column = columns.getColumn(2);
 		column.setMinWidth(130);
 		column.setMaxWidth(250);
+	}
+	
+	private double getItemPrice(String itemName){
+		java.sql.Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM avalenti.Menu WHERE Item = '" + itemName + "';";
+		double itemPrice = 0.00;
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				if(rs.next() == true) {
+					String item = rs.getString("Price");
+					itemPrice = Double.parseDouble(rs.getString("Price"));
+				}
+			} catch (SQLException e) {
+				System.err.println("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		return itemPrice;
+	
 	}
 }
