@@ -22,19 +22,14 @@ public class Order {
 		this.EmployeePin = employeePin;
 		this.TableNumber = tableNumber;
 		this.Items = items;
-		switch (status) {
-			case "entered": 
-				this.State = Status.Entered;
-				break;
-			case "paid":
-				this.State = Status.Paid;
-				break;
-			case "served":
-				this.State = Status.Served;
-				break;
-			default: 
-				this.State = Status.Entered;
-		}
+		if(status == "entered")
+			this.State = Status.Entered;
+		else if(status == "paid")
+			this.State = Status.Paid;
+		else if(status == "served")
+			this.State = Status.Served;
+		else 
+			this.State = Status.Entered;
 		this.Total = total;
 	}
 	

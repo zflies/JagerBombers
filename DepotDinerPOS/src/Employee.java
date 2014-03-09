@@ -25,29 +25,22 @@ public class Employee {
 	public Employee(String FirstName, String LastName, String EPos, String EType){
 		this.FirstName = FirstName;
 		this.LastName = LastName;
-		switch (EPos) {
-			case "Staff": 
-				this.EPosition = EmployeePosition.Staff;
-				break;
-			case "Manager":
-				this.EPosition = EmployeePosition.Manager;
-				break;
-			case "Kitchen":
-				this.EPosition = EmployeePosition.Kitchen;
-				break;
-			default: 
-				this.EPosition = EmployeePosition.Staff;
-		}
-		switch (EType) {
-			case "FullTime": 
-				this.EType = EmployeeType.FullTime;
-				break;
-			case "PartTime":
-				this.EType = EmployeeType.PartTime;
-				break;
-			default: 
-				this.EType = EmployeeType.PartTime;
-	}
+		if(EPos == "Staff")
+			this.EPosition = EmployeePosition.Staff;
+		else if(EPos == "Manager")
+			this.EPosition = EmployeePosition.Manager;
+		else if(EPos == "Kitchen")
+			this.EPosition = EmployeePosition.Kitchen;
+		else
+			this.EPosition = EmployeePosition.Staff;
+		
+		if(EType == "FullTime") 
+			this.EType = EmployeeType.FullTime;
+		else if(EType == "PartTime")
+			this.EType = EmployeeType.PartTime;
+		else 
+			this.EType = EmployeeType.PartTime;
+	
 	}
 	
 	public String getFirstName(){

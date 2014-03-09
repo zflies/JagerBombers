@@ -78,7 +78,6 @@ public class LoginWindow extends JFrame {
 		txtEmployeePin = new JPasswordField();
 		txtEmployeePin.setHorizontalAlignment(SwingConstants.CENTER);
 		txtEmployeePin.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
-		
 		JLabel lblEmployeePin = new JLabel("Employee PIN:");
 		lblEmployeePin.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEmployeePin.setFont(new Font("Lucida Grande", Font.PLAIN, 18));

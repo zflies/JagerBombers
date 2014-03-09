@@ -1,31 +1,24 @@
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JLabel;
-
-import java.awt.GridBagConstraints;
 
 import javax.swing.JTabbedPane;
 
-import java.awt.Insets;
-
-import javax.swing.border.BevelBorder;
-import javax.swing.SpringLayout;
-import javax.swing.JButton;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 
-import javax.swing.BoxLayout;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 
 public class KitchenView extends JFrame {
@@ -49,6 +42,78 @@ public class KitchenView extends JFrame {
 			}
 		});
 	}
+	
+	private Action delete = new AbstractAction()
+	{
+	    public void actionPerformed(ActionEvent e)
+	    {
+	    	//grab row information
+	        JTable table = (JTable)e.getSource();
+	        int modelRow = Integer.valueOf( e.getActionCommand() );
+	        String tableNumber = (String) ((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0);
+	        String items = (String) ((DefaultTableModel)table.getModel()).getValueAt(modelRow, 1);
+	        
+	        //update order in DB to "served"
+	        Statement state = DBConnection.OpenConnection();
+			String commandstring = "UPDATE Orders SET status = 'served' WHERE Table_No = " + tableNumber + " AND Items = '" + items + "' AND status = 'entered';";
+			if(state != null) {
+				try {
+					int result = state.executeUpdate(commandstring);
+					if(result > 0) {
+						//delete row from table
+				        ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+				        state.close();
+				        return;
+					}
+					else {
+						return;
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+					return;
+					}
+			}
+			else {
+				System.err.println("Statement was null.  No connection?");
+			}
+	        
+	        
+	    }
+	};
+	
+	private JTable getOrders() throws Exception{
+		JTable table = new JTable();
+		Vector<Order> Orders;
+		DefaultTableModel newModel = new DefaultTableModel();
+		newModel.addColumn("TableNumber");
+		newModel.addColumn("Items");
+		newModel.addColumn("Complete");
+		try {
+			Orders = Order.getEnteredOrders();
+			//add rows to table
+			for(int i = 0; i < Orders.size(); i++) {
+				Order curOrder = Orders.elementAt(i);
+				Vector<String> Row = new Vector<String>();
+				Row.add(String.valueOf(curOrder.getTableNumber()));
+				Row.add(curOrder.getItems());
+				Row.add("Complete");
+				newModel.addRow(Row);
+			}
+			
+			table.setModel(newModel);
+			
+			//add button column to table
+			ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
+			
+			return table;
+		}
+		catch (Exception e) {
+			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
+			//throw exception up
+			throw e;
+		}
+		
+	}
 
 	/**
 	 * Create the frame.
@@ -68,26 +133,34 @@ public class KitchenView extends JFrame {
 		tabbedPane.addTab("Orders", null, OrdersTab, null);
 		OrdersTab.setLayout(new BorderLayout(0, 0));
 		
-		table = new JTable();
-		OrdersTab.add(table, BorderLayout.CENTER);
-		
-		//Get orders and print into table
-		Vector<Order> Orders;
+		//create initial table
 		try {
-			Orders = Order.getEnteredOrders();
-			for(int i = 0; i < Orders.size(); i++){
-				Order curOrder = Orders.elementAt(i);
-				System.out.println("Order ID: " + curOrder.getOrderId());
-				System.out.println("Employee Pin: " + curOrder.getEmployeePin());
-				System.out.println("Table Number:" + curOrder.getTableNumber());
-				System.out.println("Items: " + curOrder.getItems());
-				System.out.println("Status: " + curOrder.getStringStatus());
-				System.out.println("Total: " + curOrder.getTotal() + "\n");
-			}
-		} catch (Exception e) {
-			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			return ;
+			table = getOrders();
+		} catch (Exception e2) {
+			JOptionPane.showMessageDialog(frame, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
+		
+		OrdersTab.add(table);
+		
+		//create and start timer to re-create table every 3 min?
+		int delay = 5000;
+		ActionListener task = new ActionListener() {
+		      public void actionPerformed(ActionEvent evt) {
+		    	  try {
+					JTable newTable = getOrders();
+					table.setModel(newTable.getModel());
+					ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+		      }
+		  };
+		Timer timer = new Timer(delay, task);
+		timer.setRepeats(true);
+		timer.start();
+		
+		
 	}
 }
