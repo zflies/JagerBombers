@@ -13,7 +13,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 
 import java.awt.Font;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -26,6 +29,8 @@ import java.sql.SQLException;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class ManageView extends JFrame {
@@ -37,6 +42,8 @@ public class ManageView extends JFrame {
 	private String employeeName;
 	private JTable employeeTable;
 	private JLabel lblEmployeeName;
+	private JButton btnClockIn;
+	private JButton btnClockOut;
 	private String selectedEmployeeFirstName;
 	private String selectedEmployeeLastName;
 	private SharedListSelectionHandler selectionHandler;
@@ -118,9 +125,52 @@ public class ManageView extends JFrame {
 		lblEmployeeName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEmployeeName.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		JButton btnClockIn = new JButton("Clock In");
+		btnClockIn = new JButton("Clock In");
+		btnClockIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pin = getEmployeePin();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date = new Date();
+				
+				java.sql.Statement state = DBConnection.OpenConnection();
+				String query = String.format("INSERT INTO `avalenti`.`Hours` (`E_PIN`, `C_IN`, `C_OUT`) VALUES (%s, '%s', '0000-00-00 00:00:00');", pin, dateFormat.format(date).toString());
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException exception) {
+						System.err.println("Error in SQL Execution");
+						}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+				
+				btnClockOut.setEnabled(true);
+				btnClockIn.setEnabled(false);
+			}
+		});
 		
-		JButton btnClockOut = new JButton("Clock Out");
+		btnClockOut = new JButton("Clock Out");
+		btnClockOut.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pin = getEmployeePin();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date = new Date();
+				
+				java.sql.Statement state = DBConnection.OpenConnection();
+				String query = String.format("UPDATE `avalenti`.`Hours` SET `C_OUT`='%s' WHERE `E_PIN`='%s' AND `C_OUT`='0000-00-00 00:00:00';", dateFormat.format(date).toString(), pin);
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException exception) {
+						System.err.println("Error in SQL Execution");
+						}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+				btnClockOut.setEnabled(false);
+				btnClockIn.setEnabled(true);
+			}
+		});
 		
 		JButton btnViewOrders = new JButton("View Orders");
 		
@@ -193,8 +243,13 @@ public class ManageView extends JFrame {
 		employeeTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				/*
+				 * Things that need to happen:
+				 * 1. Update employee name to selected employee
+				 * 2. Show/Hide clock in/out accordingly
+				 */
 				System.out.println("ACTUALLY CLICKED ENTRY");
-				updateEmployeeName();
+				updateButtons();
 			}
 		});
 		listSelectionModel = employeeTable.getSelectionModel();
@@ -211,6 +266,8 @@ public class ManageView extends JFrame {
 		//tabbedPane.setEnabledAt(1, false);
 		refreshEmployeeTable();
 		populateEmployeeName();
+		btnClockIn.setEnabled(false);;
+		btnClockOut.setEnabled(false);
 	}
 	
 	private void refreshEmployeeTable(){
@@ -224,7 +281,7 @@ public class ManageView extends JFrame {
 	
 	private void populateEmployeeName(){
 		List<String> employeeList = sortEmployeeList(getEmployees());
-		lblEmployeeName.setText(employeeList.get(0));
+		lblEmployeeName.setText("Select Employee");
 	}
 	
 	private List<String> getEmployees(){
@@ -262,7 +319,65 @@ public class ManageView extends JFrame {
 		 selectedEmployeeLastName = (String) employeeTable.getValueAt(model.getLeadSelectionIndex(), 0);
 		 lblEmployeeName.setText(selectedEmployeeLastName + ", " + selectedEmployeeFirstName);
 	}
+	
+	private boolean isClockedIn(){
+		/*
+		 * Query database for employee PIN
+		 * Check Hours table for that pin and today's date
+		 */
+		int pin = getEmployeePin();
+		boolean clockedIn = false;
 		
+		java.sql.Statement state = DBConnection.OpenConnection();
+		//select any row that matches the selected employee's pin and hasn't clocked out yet
+		String query = String.format("SELECT * FROM avalenti.Hours WHERE E_PIN = %s AND C_OUT = '%s';", pin, "0000-00-00 00:00:00");
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(query);
+				if(rs.next() == true) {
+					clockedIn = true;
+				}
+			} catch (SQLException e) {
+				System.err.println("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		return clockedIn;
+	}
+	
+	private int getEmployeePin(){
+		java.sql.Statement state = DBConnection.OpenConnection();
+		int pin = 0;
+		String query = String.format("SELECT PIN FROM avalenti.Employees WHERE FirstName = '%s' AND LastName = '%s';", selectedEmployeeFirstName, selectedEmployeeLastName);
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(query);
+				if(rs.next() == true) {
+					pin =  Integer.parseInt(rs.getString("PIN"));
+				}
+			} catch (SQLException e) {
+				System.err.println("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		return pin;
+	}
+		
+	private void updateButtons() {
+		updateEmployeeName();
+		if(isClockedIn()){
+			btnClockIn.setEnabled(false);
+			btnClockOut.setEnabled(true);
+		}
+		else{
+			btnClockIn.setEnabled(true);
+			btnClockOut.setEnabled(false);
+		}
+	}
+
 	class SharedListSelectionHandler implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent e) {
             ListSelectionModel lsm = (ListSelectionModel)e.getSource();
