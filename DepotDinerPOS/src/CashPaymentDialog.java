@@ -1,37 +1,39 @@
 
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle.ComponentPlacement;
-
 import java.awt.Font;
 
 import javax.swing.SwingConstants;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 public class CashPaymentDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
+	private JLabel lblCash;
+	private JLabel lblTotal;
+	private JLabel lblChange;
 	private JTextField txtCash;
-	private DecimalFormat df = new DecimalFormat("#.00");
+	private JButton btnPay;
+	private DecimalFormat df = new DecimalFormat("0.00");
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public CashPaymentDialog( Order curOrder ) {
+	public CashPaymentDialog( final Order curOrder ) {
 		setResizable(false);
 		setTitle("CASH - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);
@@ -40,25 +42,64 @@ public class CashPaymentDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
 		txtCash = new JTextField();
+		txtCash.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				double cashReceived = Double.parseDouble( txtCash.getText() );
+				double totalCost = curOrder.getTotal();
+				
+				if( cashReceived >= totalCost )
+				{
+					btnPay.setEnabled( true );
+					lblChange.setText( "CHANGE: $" + String.valueOf( df.format( cashReceived - totalCost ) ) );
+				}
+				else
+				{
+					JOptionPane optionPane = new JOptionPane();
+					optionPane.setMessage("Not enough money to pay.");
+					JDialog dialog = optionPane.createDialog("Insufficient Funds");
+					dialog.setAlwaysOnTop(true);
+					dialog.setVisible(true);
+					
+				}
+				
+			}});
 		txtCash.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		txtCash.setColumns(10);
 		
-		JLabel lblCash = new JLabel("CASH:");
+		lblCash = new JLabel("CASH:");
 		lblCash.setHorizontalAlignment(SwingConstants.LEFT);
 		lblCash.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
-		JLabel lblTotal = new JLabel("TOTAL: $" + df.format( curOrder.getTotal() ) );
+		lblTotal = new JLabel("TOTAL: $" + df.format( curOrder.getTotal() ) );
 		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
 		
-		JLabel lblChange = new JLabel("CHANGE: $0.00");
+		lblChange = new JLabel("CHANGE: $0.00");
 		lblChange.setHorizontalAlignment(SwingConstants.CENTER);
 		lblChange.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		JButton btnPay = new JButton("PAY");
+		btnPay = new JButton("PAY");
+		btnPay.setEnabled(false);
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Change status to paid
+
+				String query = String.format("UPDATE Orders SET Status ='paid' WHERE ID ='%s';", curOrder.getOrderId() );
+				
+				java.sql.Statement state = DBConnection.OpenConnection();
+				
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
+						}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+				
+				curOrder.setStatus( Order.Status.Paid );
+				
 				dispose();
 			}
 		});

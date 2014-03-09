@@ -1,6 +1,4 @@
 import java.awt.Component;
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -15,11 +13,11 @@ import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.JList;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
@@ -31,11 +29,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.Color;
 
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 import javax.swing.JDesktopPane;
 
 import java.sql.ResultSet;
@@ -48,7 +43,7 @@ import java.util.Vector;
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
 
-public class OrdersView extends JFrame {
+public class OrdersView extends JFrame implements WindowFocusListener{
 
 	private static OrdersView frame;
 	private JPanel contentPaneOrders;
@@ -82,7 +77,6 @@ public class OrdersView extends JFrame {
 	private static Vector<String> columnNamesAllOrders = new Vector<String>();	//< Column Names for the View All Orders table
 
 	private static Vector<Order> EmployeeAllOrders = new Vector<Order>(); //< Holds every active order for the logged in Employee
-	private static Vector<Order> EmployeePaidOrders = new Vector<Order>();	//< Holds the completed orders for the logged in employee
 	private static Vector<Vector<String>> EmployeeAllOrdersTableData = new Vector<Vector<String>>(); //< Holds the row data for the ViewAllOrders table
 	private Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
 	private ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage when passed to the Payments Dialog
@@ -90,13 +84,16 @@ public class OrdersView extends JFrame {
 	private static DecimalFormat df = new DecimalFormat("#.00");
 
 	private String employeeName;
+	private Employee loggedInEmployee;
 
 	/**
 	 * Create the frame.
 	 */
-	public OrdersView( final Employee loggedInEmployee ) {
+	public OrdersView( Employee employee ) {
 		
-		employeeName = loggedInEmployee.getFullName();
+		loggedInEmployee = employee;
+		employeeName = employee.getFullName();
+		
 		
 		//Get the orders for the logged in employee								
 		try {
@@ -266,16 +263,16 @@ public class OrdersView extends JFrame {
 		btnAddToOrder.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		lblTable = new JLabel("TABLE:");
-		lblTable.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
+		lblTable.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
 		lblTotal = new JLabel("TOTAL: $0.00");
 		lblTotal.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
+		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
 		scrollPaneViewOrder = new JScrollPane();
 		
-		lblTableNumber = new JLabel("10");
-		lblTableNumber.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
+		lblTableNumber = new JLabel("0");
+		lblTableNumber.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		GroupLayout gl_desktopPaneViewOrder = new GroupLayout(desktopPaneViewOrder);
 		gl_desktopPaneViewOrder.setHorizontalGroup(
 			gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
@@ -283,18 +280,18 @@ public class OrdersView extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
-							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnAddToOrder, GroupLayout.PREFERRED_SIZE, 194, Short.MAX_VALUE)
+							.addComponent(btnAddToOrder, GroupLayout.PREFERRED_SIZE, 194, Short.MAX_VALUE)
+							.addGap(15)
+							.addComponent(btnPayment, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+						.addGroup(Alignment.TRAILING, gl_desktopPaneViewOrder.createSequentialGroup()
+							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
 								.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 									.addComponent(lblTable)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)))
-							.addGap(15)
-							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
-								.addComponent(btnPayment, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-								.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)))
-						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
-							.addComponent(scrollPaneViewOrder, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+									.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
+									.addGap(3)
+									.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
+								.addComponent(scrollPaneViewOrder, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
 							.addGap(3)))
 					.addContainerGap())
 		);
@@ -302,10 +299,10 @@ public class OrdersView extends JFrame {
 			gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblTable, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
+						.addComponent(lblTable, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(scrollPaneViewOrder, GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
 					.addGap(14)
@@ -379,7 +376,7 @@ public class OrdersView extends JFrame {
 		btnHistory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				dialogHistory = new OrderHistoryDialog();
+				dialogHistory = new OrderHistoryDialog( loggedInEmployee );
 				dialogHistory.setVisible(true);
 				dialogHistory.setLocationRelativeTo(null);
 				dialogHistory.setTitle(  (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.YEAR) + " Order History");
@@ -388,29 +385,16 @@ public class OrdersView extends JFrame {
 		});
 		btnHistory.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		JButton btnRefresh = new JButton("REFRESH");
-		btnRefresh.setMnemonic(KeyEvent.VK_R);
-		
-				btnRefresh.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						RefreshTableData( loggedInEmployee );
-					}
-				});
-				btnRefresh.setMnemonic(KeyEvent.VK_X);
-				btnRefresh.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		
 		GroupLayout gl_desktopPaneAllOrders = new GroupLayout(desktopPaneAllOrders);
 		gl_desktopPaneAllOrders.setHorizontalGroup(
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
-							.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 144, Short.MAX_VALUE)
+							.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 191, Short.MAX_VALUE)
 							.addGap(18)
-							.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 81, Short.MAX_VALUE)
-							.addGap(18)
-							.addComponent(btnCreateOrder, GroupLayout.PREFERRED_SIZE, 142, Short.MAX_VALUE))
+							.addComponent(btnCreateOrder, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 						.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 403, Short.MAX_VALUE))
 					.addContainerGap())
 		);
@@ -418,17 +402,12 @@ public class OrdersView extends JFrame {
 			gl_desktopPaneAllOrders.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
+					.addComponent(scrollPaneAllOrders, GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
-							.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.BASELINE)
-								.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnCreateOrder, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE))
-							.addGap(7))
-						.addGroup(gl_desktopPaneAllOrders.createSequentialGroup()
-							.addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
-							.addContainerGap())))
+					.addGroup(gl_desktopPaneAllOrders.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnCreateOrder, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+						.addComponent(btnHistory, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+					.addGap(7))
 		);
 		
 		
@@ -525,6 +504,8 @@ public class OrdersView extends JFrame {
 		panelOrders.setLayout(gl_panelOrders);
 		contentPaneOrders.setLayout(gl_contentPaneOrders);
 		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{tableAllOrders, btnHistory, btnCreateOrder, tableViewOrder, btnAddToOrder, btnPayment, btnExit}));
+        
+		addWindowFocusListener(this);
 	}
 	
 	private static void RefreshTableData( Employee loggedInEmployee )
@@ -546,7 +527,9 @@ public class OrdersView extends JFrame {
 				order.add( Integer.toString(curOrder.getTableNumber()) );
 				order.add( curOrder.getItems() );
 				order.add( df.format( curOrder.getTotal()) );
-
+				
+				// TODO: Add the order into the vector based on orderID.
+				// 	     This will ensure that older orders appear at the top of the list.
 				EmployeeAllOrdersTableData.add(order);
 			}
 		} catch (Exception e) {
@@ -587,4 +570,31 @@ public class OrdersView extends JFrame {
 		return itemPrice;
 	
 	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+		
+		if ( loggedInEmployee != null )
+		{
+			int selectedRow = tableAllOrders.getSelectedRow();
+			int numberOrders = tableAllOrders.getRowCount();
+
+			RefreshTableData( loggedInEmployee );
+			
+			// If the row previously selected was paid for, no row will be selected after a refresh. 
+			// Otherwise the refresh will wipe out the previously selected row
+			if ( tableAllOrders.getRowCount() != numberOrders )
+			{
+				tableAllOrders.changeSelection(0, 0, false, false);
+			}
+			else
+			{
+				tableAllOrders.changeSelection(selectedRow, 0, false, false);
+			}
+		}
+		tableAllOrders.requestFocus();
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {}
 }

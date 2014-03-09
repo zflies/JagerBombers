@@ -1,6 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -17,6 +15,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 
@@ -29,13 +28,13 @@ public class GiftPaymentDialog extends JDialog {
 	private JButton btnPay;
 	private JLabel lblTotalRemaining;
 	private JButton btnApply;
-	private DecimalFormat df = new DecimalFormat("#.00");
+	private DecimalFormat df = new DecimalFormat("0.00");
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public GiftPaymentDialog( Order curOrder ) {
+	public GiftPaymentDialog( final Order curOrder ) {
 		setResizable(false);
 		setTitle("GIFT - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);
@@ -58,9 +57,28 @@ public class GiftPaymentDialog extends JDialog {
 		txtSecurityCode.setColumns(10);
 		
 		btnPay = new JButton("PAY");
+		btnPay.setEnabled(false);
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Change status to paid
+				
+				// TODO: Need Form Validation
+				
+				String query = String.format("UPDATE Orders SET Status ='paid' WHERE ID ='%s';", curOrder.getOrderId() );
+				
+				java.sql.Statement state = DBConnection.OpenConnection();
+				
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
+						}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+				
+				curOrder.setStatus( Order.Status.Paid );
+				
 				dispose();
 			}
 		});

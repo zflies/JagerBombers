@@ -1,8 +1,7 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
@@ -17,6 +16,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 
@@ -27,13 +27,13 @@ public class CreditPaymentDialog extends JDialog {
 	private JTextField txtTotal;
 	private JLabel lblTotalCharge;
 	private JButton btnPay;
-	private DecimalFormat df = new DecimalFormat("#.00");
+	private DecimalFormat df = new DecimalFormat("0.00");
 
 
 	/**
 	 * Create the dialog.
 	 */
-	public CreditPaymentDialog( Order curOrder ) {
+	public CreditPaymentDialog( final Order curOrder ) {
 		setResizable(false);
 		setTitle("CREDIT - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);
@@ -49,23 +49,66 @@ public class CreditPaymentDialog extends JDialog {
 		txtTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		txtTotal.setColumns(10);
 		
-		JLabel lblTotal = new JLabel("TOTAL: $0.00");
+		JLabel lblTotal = new JLabel("TOTAL: $" + df.format( curOrder.getTotal() ));
 		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
 		
-		JLabel lblTip = new JLabel("TIP:");
+		final JLabel lblTip = new JLabel("TIP:");
 		lblTip.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
-		lblTotalCharge = new JLabel("TOTAL: $" + df.format( curOrder.getTotal() ) );
+		lblTotalCharge = new JLabel("TOTAL:");
 		lblTotalCharge.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTotalCharge.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
 		btnPay = new JButton("PAY");
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: Change status to paid
-				dispose();
+				
+				double totalCharge = Double.parseDouble( txtTotal.getText() );
+				double totalCost = curOrder.getTotal();
+				double tipAmount = Double.parseDouble( txtTip.getText() );
+				
+				// TODO: Need Form Validation
+				if (  totalCharge != totalCost + tipAmount )
+				{
+					if ( totalCharge < totalCost )
+					{
+						JOptionPane optionPane = new JOptionPane();
+						optionPane.setMessage("Charged amount does not cover ticket.");
+						JDialog dialog = optionPane.createDialog("Insufficient Funds");
+						dialog.setAlwaysOnTop(true);
+						dialog.setVisible(true);
+					}
+					else
+					{
+						JOptionPane optionPane = new JOptionPane();
+						optionPane.setMessage("The amount being charged does not equal the sum of the tip and ticket cost.");
+						JDialog dialog = optionPane.createDialog("Incorrect Entry");
+						dialog.setAlwaysOnTop(true);
+						dialog.setVisible(true);
+					}	
+				}
+				else
+				{
+					String query = String.format("UPDATE Orders SET Status ='paid' WHERE ID ='%s';", curOrder.getOrderId() );
+					
+					java.sql.Statement state = DBConnection.OpenConnection();
+					
+					if(state != null){
+						try {
+							state.execute(query);
+						} catch (SQLException e1) {
+							System.err.println("Error in SQL Execution");
+							}
+					}
+					else
+						System.err.println("Statement was null.  No connection?");
+					
+					curOrder.setStatus( Order.Status.Paid );
+					
+					dispose();
+				}
 			}
 		});
 		btnPay.setFont(new Font("Lucida Grande", Font.PLAIN, 20));

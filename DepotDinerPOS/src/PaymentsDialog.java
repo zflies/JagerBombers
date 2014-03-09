@@ -1,6 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -20,8 +18,8 @@ import javax.swing.JLabel;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -29,7 +27,7 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 
-public class PaymentsDialog extends JDialog {
+public class PaymentsDialog extends JDialog implements WindowFocusListener{
 
 	private final JPanel contentPanel = new JPanel();
 	private JTable table;
@@ -43,14 +41,18 @@ public class PaymentsDialog extends JDialog {
 	private static Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();
 	private static ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage
 	
-	private DecimalFormat df = new DecimalFormat("#.00");
+	private DecimalFormat df = new DecimalFormat("0.00");
+	
+	private Order curOrder;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public PaymentsDialog( final Order curOrder, ArrayList<Double> itemCosts ) {
+	public PaymentsDialog( Order order, ArrayList<Double> itemCosts ) {
+		
 		setResizable(false);
 		
+		curOrder = order;
 		ItemCosts = itemCosts;
 		
 		Vector<String> columnNamesReceipt = new Vector<String>();
@@ -59,11 +61,11 @@ public class PaymentsDialog extends JDialog {
 		
 		if ( EmployeeViewOrderTableData.isEmpty() )
 		{
-			Vector<String> order = new Vector<String>();
-			order.add("");
-			order.add("");
+			Vector<String> temp = new Vector<String>();
+			temp.add("");
+			temp.add("");
 			
-			EmployeeViewOrderTableData.add(order);
+			EmployeeViewOrderTableData.add(temp);
 		}
 		
 		table = new JTable(new DefaultTableModel(EmployeeViewOrderTableData, columnNamesReceipt) {
@@ -194,6 +196,8 @@ public class PaymentsDialog extends JDialog {
 		
 		scrollPane.setViewportView(table);
 		contentPanel.setLayout(gl_contentPanel);
+		
+        addWindowFocusListener(this);
 	}
 	
 	/**
@@ -250,4 +254,19 @@ public class PaymentsDialog extends JDialog {
 		column.setMaxWidth(250);
 	
 	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent e) {
+
+		//System.out.println("Window gained focus");
+		if ( curOrder.getStatus() == Order.Status.Paid )
+		{
+			dispose();
+		}
+
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent e) {}
+
 }
