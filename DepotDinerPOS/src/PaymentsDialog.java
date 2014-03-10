@@ -173,7 +173,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			}
 		});
 		btnGiftCard.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		JButton btnSplitTicket = new JButton("SPLIT TICKET");
+		final JButton btnSplitTicket = new JButton("SPLIT TICKET");
 		btnSplitTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -185,6 +185,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 				{
 					table.setRowSelectionAllowed( true );
 					// TODO: Alert user (tooltip?) to select items for split ticket
+					//btnSplitTicket.setToolTipText("Hold Ctrl to select mutiple items.");
 				}
 			}
 		});

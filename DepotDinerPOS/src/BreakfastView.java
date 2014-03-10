@@ -616,11 +616,11 @@ public class BreakfastView extends JFrame {
 		Vector<Vector> outer = model.getDataVector();
 		for(int i = 0; i < outer.size(); i++){
 			Vector inner = outer.elementAt(i);
-			for(int j = 0; j < inner.size(); j++){
-				if(inner.elementAt(j) != ""){
-					csv = csv + inner.elementAt(j) + ",";
-				}
+			if ( i > 0 )
+			{
+				csv += ", "; // Add the comma here.  This will prevent appending ',' on the last item	
 			}
+			csv += inner.elementAt(0);
 		}
 		return csv;
 	}
