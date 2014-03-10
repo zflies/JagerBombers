@@ -96,8 +96,8 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		JScrollPane scrollPane = new JScrollPane();
-		JButton btnNewButton = new JButton("CASH");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnCash = new JButton("CASH");
+		btnCash.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 				int[] selection = table.getSelectedRows();
@@ -121,7 +121,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 				dialogCashPayment.setAlwaysOnTop(true);	
 			}
 		});
-		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		btnCash.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		JButton btnCreditCard = new JButton("CREDIT CARD");
 		btnCreditCard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -219,7 +219,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 								.addComponent(btnPrint, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 								.addComponent(btnSplitTicket, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-									.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+									.addComponent(btnCash, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 									.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 									.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)))))
 					.addGap(5))
@@ -230,7 +230,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+							.addComponent(btnCash, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
 							.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
@@ -433,6 +433,8 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 
 
 	@Override
-	public void windowLostFocus(WindowEvent e) {}
+	public void windowLostFocus(WindowEvent e) {
+		
+	}
 
 }

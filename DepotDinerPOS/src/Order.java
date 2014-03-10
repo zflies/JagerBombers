@@ -124,9 +124,7 @@ public class Order {
 					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
 					OrderVector.add(new_order);
 				}
-				if(OrderVector.size() == 0) {
-					throw new Exception("No Pending Orders");
-				}
+
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 				throw new Exception("Error in SQL Execution");
@@ -150,10 +148,10 @@ public class Order {
 		
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'entered' OR Status = 'servered' " +
-					"AND E_PIN = (SELECT PIN FROM Employees " + 
-									"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
-									"AND LastName = '" + loggedInEmployee.getLastName() + "') ORDER BY ID ASC;"; //DESC
+		String commandstring = "SELECT * FROM Orders WHERE (Status = 'entered' OR Status = 'servered') " +
+							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
+							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
@@ -173,9 +171,7 @@ public class Order {
 					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
 					OrderVector.add(new_order);
 				}
-				if(OrderVector.size() == 0) {
-					throw new Exception("No Pending Orders");
-				}
+
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 				throw new Exception("Error in SQL Execution");
@@ -221,9 +217,7 @@ public class Order {
 					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
 					OrderVector.add(new_order);
 				}
-				if(OrderVector.size() == 0) {
-					throw new Exception("No Split Orders");
-				}
+
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 				throw new Exception("Error in SQL Execution");
@@ -315,7 +309,7 @@ public class Order {
 	public static Vector<Order> getPaidOrders() throws Exception{
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid' ORDER BY ID DESC;";
+		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid';";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
@@ -336,7 +330,7 @@ public class Order {
 					OrderVector.add(new_order);
 				}
 				if(OrderVector.size() == 0) {
-					throw new Exception("No Pending Orders");
+					throw new Exception("No Completed Orders");
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());

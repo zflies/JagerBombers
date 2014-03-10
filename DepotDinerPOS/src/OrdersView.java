@@ -59,8 +59,8 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	private JButton btnHistory;
 	private JScrollPane scrollPaneAllOrders;
 	private JLabel lblTable;
-	private JLabel lblTotal;
-	private JLabel lblTableNumber;
+	private static JLabel lblTotal;
+	private static JLabel lblTableNumber;
 	private JScrollPane scrollPaneViewOrder;
 	private static JTable tableAllOrders;
 	private JTable tableViewOrder;
@@ -78,10 +78,10 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 
 	private static Vector<Order> EmployeeAllOrders = new Vector<Order>(); //< Holds every active order for the logged in Employee
 	private static Vector<Vector<String>> EmployeeAllOrdersTableData = new Vector<Vector<String>>(); //< Holds the row data for the ViewAllOrders table
-	private Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
+	private static Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();	//< Holds the row data for the ViewOrder table
 	private ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage when passed to the Payments Dialog
 
-	private static DecimalFormat df = new DecimalFormat("#.00");
+	private static DecimalFormat df = new DecimalFormat("0.00");
 
 	private String employeeName;
 	private Employee loggedInEmployee;
@@ -216,16 +216,23 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 
 		btnPayment.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
-				int table = tableAllOrders.getSelectedRow();
-	        	
-	        	if (table < 0 )
+					        	
+	        	if ( EmployeeAllOrders.isEmpty() )
 	        	{
-	        		return; // TODO: Show alert dialog that tells user to select a table first
+	        		return;
 	        	}	            
 	        	
-	            Order curOrder = EmployeeAllOrders.get( table );
-	            
+	        	int row = tableAllOrders.getSelectedRow();
+	        	Order curOrder;
+	        	
+	        	if ( row == -1 )
+	        	{
+		            curOrder = EmployeeAllOrders.get( 0 );
+	        	}
+	        	else
+	        	{
+		            curOrder = EmployeeAllOrders.get( tableAllOrders.getSelectedRow() );
+	        	}	            
 				dialogPayment = new PaymentsDialog( loggedInEmployee, curOrder, ItemCosts );
 				dialogPayment.setVisible(true);
 				
@@ -234,7 +241,6 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 				
 				dialogPayment.setAlwaysOnTop(true);	
 				
-				//RefreshTableData( loggedInEmployee );
 			}
 		});
 		btnPayment.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -277,17 +283,17 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 			gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
 						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 							.addComponent(btnAddToOrder, GroupLayout.PREFERRED_SIZE, 194, Short.MAX_VALUE)
 							.addGap(15)
 							.addComponent(btnPayment, GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
-						.addGroup(Alignment.TRAILING, gl_desktopPaneViewOrder.createSequentialGroup()
+						.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 							.addGroup(gl_desktopPaneViewOrder.createParallelGroup(Alignment.TRAILING)
 								.addGroup(gl_desktopPaneViewOrder.createSequentialGroup()
 									.addComponent(lblTable)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(lblTableNumber, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
+									.addComponent(lblTableNumber, GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
 									.addGap(3)
 									.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE))
 								.addComponent(scrollPaneViewOrder, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE))
@@ -310,15 +316,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 						.addComponent(btnPayment, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
-		
-		if ( EmployeeViewOrderTableData.isEmpty() )
-		{
-			Vector<String> order = new Vector<String>();
-			order.add("");
-			order.add("");
-			order.add("");
-			EmployeeViewOrderTableData.add(order);
-		}
+
 
 		tableViewOrder = new JTable(new DefaultTableModel( EmployeeViewOrderTableData, columnNamesViewOrder ) {
 			boolean[] columnEditables = new boolean[] {
@@ -425,14 +423,23 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	        public void valueChanged(ListSelectionEvent event) {
 	           	            
 	            // Update View Order table based on All Orders table selection
-	        	int table = tableAllOrders.getSelectedRow();
 	        	
-	        	if (table < 0 )
+	        	if ( EmployeeAllOrders.isEmpty() )
 	        	{
 	        		return;
 	        	}	            
 	        	
-	            Order curOrder = EmployeeAllOrders.get( table );
+	        	int row = tableAllOrders.getSelectedRow();
+	        	Order curOrder;
+	        	
+	        	if ( row == -1 )
+	        	{
+		            curOrder = EmployeeAllOrders.get( 0 );
+	        	}
+	        	else
+	        	{
+		            curOrder = EmployeeAllOrders.get( tableAllOrders.getSelectedRow() );
+	        	}
 	            
 	            lblTableNumber.setText( String.valueOf( curOrder.getTableNumber() ) );
 	            lblTotal.setText( "Total: $" + df.format( curOrder.getTotal() ) );
@@ -510,6 +517,9 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	private static void RefreshTableData( Employee loggedInEmployee )
 	{
 		EmployeeAllOrdersTableData.clear();
+		EmployeeViewOrderTableData.clear();
+		lblTableNumber.setText( "0" );
+        lblTotal.setText( "Total: $0.00" );
 
 		//Get the orders for the logged in employee								
 		try {
