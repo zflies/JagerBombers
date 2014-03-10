@@ -23,13 +23,13 @@ public class Order {
 		this.EmployeePin = employeePin;
 		this.TableNumber = tableNumber;
 		this.Items = items;
-		if(status == "entered")
+		if(status.compareTo("entered") == 0)
 			this.State = Status.Entered;
-		else if(status == "paid")
+		else if(status.compareTo("paid") == 0)
 			this.State = Status.Paid;
-		else if(status == "served")
+		else if(status.compareTo("served") == 0)
 			this.State = Status.Served;
-		else if(status == "split")
+		else if(status.compareTo("split") == 0)
 			this.State = Status.Split;
 		else 
 			this.State = Status.Entered;

@@ -133,6 +133,8 @@ public class KitchenView extends JFrame {
 		tabbedPane.addTab("Orders", null, OrdersTab, null);
 		OrdersTab.setLayout(new BorderLayout(0, 0));
 		
+		
+		
 		//create initial table
 		try {
 			table = getOrders();
@@ -143,7 +145,7 @@ public class KitchenView extends JFrame {
 		
 		OrdersTab.add(table);
 		
-		//create and start timer to re-create table every 3 min?
+		//create and start timer to re-create table every 5 secs
 		int delay = 5000;
 		ActionListener task = new ActionListener() {
 		      public void actionPerformed(ActionEvent evt) {

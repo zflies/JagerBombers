@@ -25,18 +25,18 @@ public class Employee {
 	public Employee(String FirstName, String LastName, String EPos, String EType){
 		this.FirstName = FirstName;
 		this.LastName = LastName;
-		if(EPos == "Staff")
+		if(EPos.compareTo("Staff") == 0)
 			this.EPosition = EmployeePosition.Staff;
-		else if(EPos == "Manager")
+		else if(EPos.compareTo("Manager") == 0)
 			this.EPosition = EmployeePosition.Manager;
-		else if(EPos == "Kitchen")
+		else if(EPos.compareTo("Kitchen") == 0)
 			this.EPosition = EmployeePosition.Kitchen;
 		else
 			this.EPosition = EmployeePosition.Staff;
 		
-		if(EType == "FullTime") 
+		if(EType.compareTo("full-time") == 0) 
 			this.EType = EmployeeType.FullTime;
-		else if(EType == "PartTime")
+		else if(EType.compareTo("part-time") == 0)
 			this.EType = EmployeeType.PartTime;
 		else 
 			this.EType = EmployeeType.PartTime;
