@@ -20,6 +20,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -44,14 +45,17 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	private DecimalFormat df = new DecimalFormat("0.00");
 	
 	private Order curOrder;
+	private Order splitOrder;
+	private Employee loggedInEmployee;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public PaymentsDialog( Order order, ArrayList<Double> itemCosts ) {
+	public PaymentsDialog( Employee employee, Order order, ArrayList<Double> itemCosts ) {
 		
 		setResizable(false);
 		
+		loggedInEmployee = employee;
 		curOrder = order;
 		ItemCosts = itemCosts;
 		
@@ -96,7 +100,19 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				dialogCashPayment = new CashPaymentDialog( curOrder );
+				int[] selection = table.getSelectedRows();
+				
+				// If no items were selected or if All items are selected, then do not split ticket
+				if ( selection.length < 1 || selection.length == EmployeeViewOrderTableData.size() )
+				{
+					dialogCashPayment = new CashPaymentDialog( curOrder );
+				}
+				else
+				{
+					createSplitOrder( selection );
+					dialogCashPayment = new CashPaymentDialog( splitOrder );	
+				}
+
 				dialogCashPayment.setVisible(true);
 				
 				dialogCashPayment.setLocationRelativeTo(null);
@@ -110,7 +126,18 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnCreditCard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				dialogCreditPayment = new CreditPaymentDialog( curOrder );
+				int[] selection = table.getSelectedRows();
+				
+				// If no items were selected or if All items are selected, then do not split ticket
+				if ( selection.length < 1 || selection.length == EmployeeViewOrderTableData.size() )
+				{
+					dialogCreditPayment = new CreditPaymentDialog( curOrder );
+				}
+				else
+				{
+					createSplitOrder( selection );
+					dialogCreditPayment = new CreditPaymentDialog( splitOrder );	
+				}
 				dialogCreditPayment.setVisible(true);
 				
 				dialogCreditPayment.setLocationRelativeTo(null);
@@ -124,7 +151,19 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnGiftCard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				dialogGiftPayment = new GiftPaymentDialog( curOrder );
+				int[] selection = table.getSelectedRows();
+				
+				// If no items were selected or if All items are selected, then do not split ticket
+				if ( selection.length < 1 || selection.length == EmployeeViewOrderTableData.size() )
+				{
+					dialogGiftPayment = new GiftPaymentDialog( curOrder );
+				}
+				else
+				{
+					createSplitOrder( selection );
+					dialogGiftPayment = new GiftPaymentDialog( splitOrder );	
+				}
+				
 				dialogGiftPayment.setVisible(true);
 				
 				dialogGiftPayment.setLocationRelativeTo(null);
@@ -135,6 +174,20 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		});
 		btnGiftCard.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		JButton btnSplitTicket = new JButton("SPLIT TICKET");
+		btnSplitTicket.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if ( table.getRowSelectionAllowed() )
+				{
+					table.setRowSelectionAllowed( false );
+				}
+				else
+				{
+					table.setRowSelectionAllowed( true );
+					// TODO: Alert user (tooltip?) to select items for split ticket
+				}
+			}
+		});
 		btnSplitTicket.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JButton btnPrint = new JButton("PRINT RECEIPT");
@@ -254,17 +307,129 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		column.setMaxWidth(250);
 	
 	}
+	
+	/**
+	 *  Returns an Order object of the selected items
+	 */
+	private void createSplitOrder( int[] selection ){
+		
+		String items = "";
+		double totalPrice = 0.00;
+		
+		for ( int i = 0; i < selection.length; i ++ )
+		{
+			if ( i > 0 )
+			{
+				items += ", ";
+			}
+			items += EmployeeViewOrderTableData.get( selection[i] ).firstElement();
+			totalPrice += ItemCosts.get( selection[i] );
+		}
+		
+		String employeePIN = "(SELECT PIN FROM Employees WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+				"AND LastName = '" + loggedInEmployee.getLastName() + "')";
+		int tableNumber = curOrder.getTableNumber();
+		String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES (%s, '%s', '%s', 'split', '%s');", employeePIN, tableNumber, items, totalPrice);
+		
+		java.sql.Statement state = DBConnection.OpenConnection();
+		if(state != null){
+			try {
+				state.execute(query);
+			} catch (SQLException e) {
+				System.err.println("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");	
+				
+		try {
+			splitOrder = Order.getEmployeeSplitOrder( loggedInEmployee ).firstElement();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {
-
-		//System.out.println("Window gained focus");
+		
 		if ( curOrder.getStatus() == Order.Status.Paid )
 		{
 			dispose();
 		}
+		else if ( splitOrder != null )
+		{
+			if ( splitOrder.getStatus() == Order.Status.Paid )
+			{
+				// Modify curOrder to remove the split order items and update the DB
+				int[] selection = table.getSelectedRows();
+				int itemCount = 0;
+				String items = "";
+				boolean isSelected;
 
+				for ( int i = 0; i < EmployeeViewOrderTableData.size(); i++ )
+				{
+					isSelected = false;
+					for ( int j = 0; j < selection.length; j ++ )
+					{
+						if ( i == selection[j] )
+						{
+							isSelected = true;
+						}
+					}
+
+					if ( !isSelected )
+					{
+						if ( itemCount > 0 )
+						{
+							items += ", ";
+						}
+						items += EmployeeViewOrderTableData.get( i ).firstElement();
+						itemCount++;
+					}
+				}
+
+				double total = curOrder.getTotal() - splitOrder.getTotal();
+
+				String query = String.format("UPDATE Orders SET `Items` = '%s', `Total` = '%s' WHERE ID = %s;", items, total, curOrder.getOrderId() );
+
+				java.sql.Statement state = DBConnection.OpenConnection();
+
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
+					}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+
+				curOrder.setItems( items );
+				curOrder.setTotal( total );
+				lblTotal.setText( "TOTAL: $" +  df.format( curOrder.getTotal() ) );
+				refreshReceipt( curOrder );
+			}
+			else
+			{
+				// Delete splitOrder from the DB since the operation was aborted
+				String query = String.format("DELETE FROM Orders WHERE ID ='%s';", splitOrder.getOrderId() );
+
+				java.sql.Statement state = DBConnection.OpenConnection();
+
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
+					}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+
+			}
+		}
 	}
+
 
 	@Override
 	public void windowLostFocus(WindowEvent e) {}

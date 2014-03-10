@@ -7,6 +7,7 @@ public class Order {
 	public static enum Status {
 		Entered,
 		Served,
+		Split,
 		Paid;
 	}
 	
@@ -28,6 +29,8 @@ public class Order {
 			this.State = Status.Paid;
 		else if(status == "served")
 			this.State = Status.Served;
+		else if(status == "split")
+			this.State = Status.Split;
 		else 
 			this.State = Status.Entered;
 		this.Total = total;
@@ -61,6 +64,8 @@ public class Order {
 					return "Served";
 			case Paid:
 					return "Paid";
+			case Split:
+					return "Split";
 			default:
 					return null;
 		}
@@ -72,6 +77,10 @@ public class Order {
 	
 	public void setItems(String items){
 		this.Items = items;
+	}
+	
+	public void setTotal(double total){
+		this.Total = total;
 	}
 	
 	public void setTableNumber(int newTableNumber){
@@ -166,6 +175,54 @@ public class Order {
 				}
 				if(OrderVector.size() == 0) {
 					throw new Exception("No Pending Orders");
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		state.close();
+		return OrderVector;
+	}
+	
+	
+	/**
+	 * Returns the newly created order for a split ticket order
+	 * @return
+	 * @throws Exception
+	 */
+	public static Vector<Order> getEmployeeSplitOrder( Employee loggedInEmployee ) throws Exception{
+		
+		Vector<Order> OrderVector = new Vector<Order>();
+		Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM Orders WHERE Status = 'split' " +
+							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
+							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
+		int ID = 0;
+		int E_PIN = 0;
+		int Table_No = 0;
+		String Items = "";
+		String Status = "";
+		double Total = 0.0;
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				while(rs.next()) {
+					ID = rs.getInt("ID");
+					E_PIN = rs.getInt("E_PIN");
+					Table_No = rs.getInt("Table_No");
+					Items = rs.getString("Items");
+					Status = rs.getString("Status");
+					Total = rs.getDouble("Total");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					OrderVector.add(new_order);
+				}
+				if(OrderVector.size() == 0) {
+					throw new Exception("No Split Orders");
 				}
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());

@@ -649,7 +649,6 @@ public class BreakfastView extends JFrame {
 	
 	private void placeOrder(String query){
 		java.sql.Statement state = DBConnection.OpenConnection();
-		double itemPrice = 0.00;
 		if(state != null){
 			try {
 				state.execute(query);

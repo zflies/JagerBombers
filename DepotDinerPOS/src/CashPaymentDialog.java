@@ -34,6 +34,13 @@ public class CashPaymentDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public CashPaymentDialog( final Order curOrder ) {
+		
+		if ( curOrder == null )
+		{
+			System.out.println("NULL Exception - CashPaymentDialog(); curOrder = null");
+			dispose();
+		}
+		
 		setResizable(false);
 		setTitle("CASH - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);

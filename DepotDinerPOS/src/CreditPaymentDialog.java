@@ -34,6 +34,13 @@ public class CreditPaymentDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public CreditPaymentDialog( final Order curOrder ) {
+		
+		if ( curOrder == null )
+		{
+			System.out.println("NULL Exception - CreditPaymentDialog(); curOrder = null");
+			dispose();
+		}
+		
 		setResizable(false);
 		setTitle("CREDIT - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);

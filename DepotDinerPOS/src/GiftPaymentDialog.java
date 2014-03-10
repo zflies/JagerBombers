@@ -35,6 +35,13 @@ public class GiftPaymentDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public GiftPaymentDialog( final Order curOrder ) {
+		
+		if ( curOrder == null )
+		{
+			System.out.println("NULL Exception - CashPaymentDialog(); curOrder = null");
+			dispose();
+		}
+		
 		setResizable(false);
 		setTitle("GIFT - TABLE " + curOrder.getTableNumber() + " Payment");
 		setBounds(100, 100, 342, 279);
@@ -89,6 +96,14 @@ public class GiftPaymentDialog extends JDialog {
 		lblTotalRemaining.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
 		btnApply = new JButton("APPLY");
+		btnApply.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				// TODO: Subtract card balance from ticket cost
+				btnPay.setEnabled( true );
+				
+			}
+		});
 		btnApply.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(

@@ -94,7 +94,6 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		loggedInEmployee = employee;
 		employeeName = employee.getFullName();
 		
-		
 		//Get the orders for the logged in employee								
 		try {
 
@@ -227,7 +226,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	        	
 	            Order curOrder = EmployeeAllOrders.get( table );
 	            
-				dialogPayment = new PaymentsDialog( curOrder, ItemCosts );
+				dialogPayment = new PaymentsDialog( loggedInEmployee, curOrder, ItemCosts );
 				dialogPayment.setVisible(true);
 				
 				dialogPayment.setLocationRelativeTo(null);
