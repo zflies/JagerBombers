@@ -58,7 +58,7 @@ public class AddEmployeeDialog extends JDialog {
 	 */
 	public AddEmployeeDialog() {
 		setTitle("Add Employee");
-		String[] positions = {"Staff", "Cook", "Manager"};
+		String[] positions = {"Staff", "Kitchen", "Manager"};
 		String[] types = {"Full-Time", "Part-Time"};
 		setBounds(100, 100, 675, 520);
 		getContentPane().setLayout(new BorderLayout());
@@ -113,7 +113,7 @@ public class AddEmployeeDialog extends JDialog {
 					String type = comboBoxType.getSelectedItem().toString();
 					
 					java.sql.Statement state = DBConnection.OpenConnection();
-					String query = String.format("INSERT INTO `avalenti`.`Employees` VALUES ('%s', '%s', %s, '%s', '%s');", firstName, lastName, pin, position, type);
+					String query = String.format("INSERT INTO `avalenti`.`Employees` (`FirstName`, `LastName`, `PIN`, `Position`, `Type`) VALUES ('%s', '%s', %s, '%s', '%s');", firstName, lastName, pin, position, type);
 					if(state != null){
 						try {
 							state.execute(query);
@@ -123,6 +123,8 @@ public class AddEmployeeDialog extends JDialog {
 					}
 					else
 						System.err.println("Statement was null.  No connection?");
+					
+					dispose();
 				}
 			});
 			GroupLayout gl_buttonPane = new GroupLayout(buttonPane);
