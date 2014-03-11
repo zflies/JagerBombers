@@ -66,7 +66,8 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private String selectedEmployeeLastName;
 	private SharedListSelectionHandler selectionHandler;
 	ListSelectionModel listSelectionModel;
-	String column_names[]= {"First Name","Last Name"};
+
+	String column_names[]= {"Last Name","First Name"};
 
 	/* ORDERS Tab */
 	private JButton btnExit;
@@ -238,6 +239,26 @@ public class ManageView extends JFrame implements WindowFocusListener{
 
 		JButton btnDelete = new JButton("Delete");
 
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int pin = getEmployeePin();
+				java.sql.Statement state = DBConnection.OpenConnection();
+				String query = String.format("DELETE FROM `avalenti`.`Employees` WHERE `PIN`= %s;", pin);
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException exception) {
+						System.err.println("Error in SQL Execution");
+						}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+				clearEmployeeTable();
+				refreshEmployeeTable();
+				lblEmployeeName.setText("Select Employee");
+			}
+		});
+		
 		JButton btnGenerateReport = new JButton("Generate Report");
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -712,7 +733,12 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			model.addRow(new Object[]{employeeArray[0], employeeArray[1]});
 		}
 	}
-
+	
+	private void clearEmployeeTable(){
+		DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
+		model.setRowCount(0);
+	}
+	
 	private void populateEmployeeName(){
 		List<String> employeeList = sortEmployeeList(getEmployees());
 		lblEmployeeName.setText("Select Employee");
