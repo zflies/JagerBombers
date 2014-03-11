@@ -40,7 +40,6 @@ public class LoginWindow extends JFrame {
 					frame = new LoginWindow();
 					frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 					frame.setVisible(true);
-					frame.getRootPane().setDefaultButton(btnSubmit);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -78,6 +77,12 @@ public class LoginWindow extends JFrame {
 		txtEmployeePin = new JPasswordField();
 		txtEmployeePin.setHorizontalAlignment(SwingConstants.CENTER);
 		txtEmployeePin.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
+		txtEmployeePin.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				login();				
+			}});
+		
+		
 		JLabel lblEmployeePin = new JLabel("Employee PIN:");
 		lblEmployeePin.setHorizontalAlignment(SwingConstants.CENTER);
 		lblEmployeePin.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
@@ -85,45 +90,7 @@ public class LoginWindow extends JFrame {
 		btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				String pin = new  String(txtEmployeePin.getPassword());
-				//access DB and return the associated employee
-
-				Employee loggedInEmployee;
-				try {
-					loggedInEmployee = Employee.getEmployeeByPIN(pin);
-				} catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				//check employee type and open corresponding window
-				if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Staff){
-					//open orders window
-					System.out.println("Opening Orders Window!");
-					OrdersView Orders = new OrdersView(loggedInEmployee);
-					Orders.setVisible(true);
-					Orders.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				}
-				else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Kitchen){
-					//open kitchen window
-					System.out.println("Opening Kitchen Window!");
-					KitchenView Kitchen = new KitchenView();
-					Kitchen.setVisible(true);
-					Kitchen.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				}
-				else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Manager){
-					//open manager window
-					System.out.println("Opening Manager Window!");
-					ManageView Manage = new ManageView(loggedInEmployee);
-					Manage.setVisible(true);
-					Manage.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				}
-				else{
-					//error, pin couldn't be matched
-					JOptionPane.showMessageDialog(frame, "Employee Position could not be resolved", "Invalid Employee Position", JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				frame.setVisible(false);
-				dispose();
+				login();				
 			}
 		});
 		btnSubmit.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
@@ -153,5 +120,49 @@ public class LoginWindow extends JFrame {
 					.addContainerGap(132, Short.MAX_VALUE))
 		);
 		panel.setLayout(gl_panel);
+	}
+	
+	private void login() {
+		
+		String pin = new  String(txtEmployeePin.getPassword());
+		//access DB and return the associated employee
+
+		Employee loggedInEmployee;
+		try {
+			loggedInEmployee = Employee.getEmployeeByPIN(pin);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		//check employee type and open corresponding window
+		if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Staff){
+			//open orders window
+			System.out.println("Opening Orders Window!");
+			OrdersView Orders = new OrdersView(loggedInEmployee);
+			Orders.setVisible(true);
+			Orders.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+		else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Kitchen){
+			//open kitchen window
+			System.out.println("Opening Kitchen Window!");
+			KitchenView Kitchen = new KitchenView();
+			Kitchen.setVisible(true);
+			Kitchen.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+		else if(loggedInEmployee.getEmployeePosition() == Employee.EmployeePosition.Manager){
+			//open manager window
+			System.out.println("Opening Manager Window!");
+			ManageView Manage = new ManageView(loggedInEmployee);
+			Manage.setVisible(true);
+			Manage.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+		else{
+			//error, pin couldn't be matched
+			JOptionPane.showMessageDialog(frame, "Employee Position could not be resolved", "Invalid Employee Position", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		frame.setVisible(false);
+		dispose();
+		
 	}
 }
