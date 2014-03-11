@@ -69,6 +69,9 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	private static TableColumnModel columns;
 	private static TableColumn column;
 	
+	private static final double DINNER_DISCOUNT = 1.00;
+	private static final double BREAKFAST_DISCOUNT = 0.50;
+
 	private static final int BREAKFAST_HOUR = 11;
 	
 	private Calendar calendar = Calendar.getInstance();
@@ -561,12 +564,14 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	private double getItemPrice(String itemName){
 		java.sql.Statement state = DBConnection.OpenConnection();
 		String commandstring = "SELECT * FROM avalenti.Menu WHERE Item = '" + itemName + "';";
+		String special = "";
 		double itemPrice = 0.00;
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
 				if(rs.next() == true) {
 					String item = rs.getString("Price");
+					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
 			} catch (SQLException e) {
@@ -576,8 +581,42 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		else
 			System.err.println("Statement was null.  No connection?");
 		
+		if(special.compareTo(getDay()) == 0){
+			
+			Calendar calendar = Calendar.getInstance();
+			if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
+				itemPrice -= BREAKFAST_DISCOUNT;
+	
+			}
+			else
+			{
+				itemPrice -= DINNER_DISCOUNT;
+			}				
+		}
+		
 		return itemPrice;
 	
+	}
+	
+	private String getDay(){
+		Calendar calendar = Calendar.getInstance();
+		switch (calendar.get(Calendar.DAY_OF_WEEK))
+		{
+		   case Calendar.MONDAY:
+			   return "Monday";
+		   case Calendar.TUESDAY:
+			   return "Tuesday";
+		   case Calendar.WEDNESDAY:
+			   return "Wednesday";
+		   case Calendar.THURSDAY:
+			   return "Thursday";
+		   case Calendar.FRIDAY:
+			   return "Friday";
+		   case Calendar.SATURDAY:
+			   return "Saturday";
+		   default:
+		   		return "Sunday";
+		}
 	}
 
 	@Override
