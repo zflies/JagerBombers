@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.Vector;
 
 import javax.swing.GroupLayout;
@@ -33,6 +34,7 @@ public class BreakfastView extends JFrame {
 	private static JButton btnCreate;
 	private DecimalFormat df = new DecimalFormat("0.00");
 	private JTable ordersTable;
+	private static final double BREAKFAST_DISCOUNT = 0.50;
 	String column_names[]= {"Item","Notes","Price"};
 
 	/**
@@ -673,12 +675,14 @@ public class BreakfastView extends JFrame {
 	private double getItemPrice(String itemName){
 		java.sql.Statement state = DBConnection.OpenConnection();
 		String commandstring = "SELECT * FROM avalenti.Menu WHERE Item = '" + itemName + "';";
+		String special = "";
 		double itemPrice = 0.00;
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
 				if(rs.next() == true) {
 					String item = rs.getString("Price");
+					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
 			} catch (SQLException e) {
@@ -688,8 +692,33 @@ public class BreakfastView extends JFrame {
 		else
 			System.err.println("Statement was null.  No connection?");
 		
+		if(special.compareTo(getDay()) == 0){
+			itemPrice -= BREAKFAST_DISCOUNT;
+		}
+		
 		return itemPrice;
 	
+	}
+	
+	private String getDay(){
+		Calendar calendar = Calendar.getInstance();
+		switch (calendar.get(Calendar.DAY_OF_WEEK))
+		{
+		   case Calendar.MONDAY:
+			   return "Monday";
+		   case Calendar.TUESDAY:
+			   return "Tuesday";
+		   case Calendar.WEDNESDAY:
+			   return "Wednesday";
+		   case Calendar.THURSDAY:
+			   return "Thursday";
+		   case Calendar.FRIDAY:
+			   return "Friday";
+		   case Calendar.SATURDAY:
+			   return "Saturday";
+		   default:
+		   		return "Sunday";
+		}
 	}
 	
 	private void placeOrder(String query){
