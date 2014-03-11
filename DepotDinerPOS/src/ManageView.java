@@ -62,6 +62,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private JLabel lblEmployeeName;
 	private JButton btnClockIn;
 	private JButton btnClockOut;
+	private JButton btnDelete;
 	private String selectedEmployeeFirstName;
 	private String selectedEmployeeLastName;
 	private SharedListSelectionHandler selectionHandler;
@@ -240,10 +241,15 @@ public class ManageView extends JFrame implements WindowFocusListener{
 
 		JButton btnViewPayrollhours = new JButton("View Payroll/Hours");
 
-		JButton btnDelete = new JButton("Delete");
+		btnDelete = new JButton("Delete");
 
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int result = JOptionPane.showConfirmDialog(frame, "Are you sure you want to delete this employee?", 
+					       "Delete Employee", JOptionPane.INFORMATION_MESSAGE);
+				if (result != JOptionPane.OK_OPTION){
+					return;
+				}
 				int pin = getEmployeePin();
 				java.sql.Statement state = DBConnection.OpenConnection();
 				String query = String.format("DELETE FROM `avalenti`.`Employees` WHERE `PIN`= %s;", pin);
@@ -256,9 +262,9 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				}
 				else
 					System.err.println("Statement was null.  No connection?");
-				clearEmployeeTable();
 				refreshEmployeeTable();
 				lblEmployeeName.setText("Select Employee");
+				btnDelete.setEnabled(false);
 			}
 		});
 		
@@ -343,6 +349,8 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		employeeTable.setFont(new Font("Lucida Grande", Font.BOLD, 15));
 		scrollPane.setViewportView(employeeTable);
 		panel_manage.setLayout(gl_panel_manage);
+		//set delete button to be disabled by default
+		btnDelete.setEnabled(false);
 
 
 
@@ -729,6 +737,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	}
 
 	private void refreshEmployeeTable(){
+		clearEmployeeTable();
 		List<String> employeeList = sortEmployeeList(getEmployees());
 		DefaultTableModel model = (DefaultTableModel) employeeTable.getModel();
 		for(int i = 0; i < employeeList.size(); i++){
@@ -831,6 +840,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 
 	private void updateButtons() {
 		updateEmployeeName();
+		btnDelete.setEnabled(true);
 		if(isClockedIn()){
 			btnClockIn.setEnabled(false);
 			btnClockOut.setEnabled(true);
@@ -996,6 +1006,9 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			}
 		}
 		tableAllOrders.requestFocus();
+		
+		//refreshing employee table in the manager tab
+		refreshEmployeeTable();
 	}
 
 	@Override
