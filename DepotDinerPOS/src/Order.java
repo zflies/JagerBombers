@@ -151,7 +151,7 @@ public class Order {
 		String commandstring = "SELECT * FROM Orders WHERE (Status = 'entered' OR Status = 'servered') " +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
-							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "') ORDER BY ID ASC;";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
@@ -197,7 +197,7 @@ public class Order {
 		String commandstring = "SELECT * FROM Orders WHERE Status = 'split' " +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
-							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "')";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
@@ -309,7 +309,7 @@ public class Order {
 	public static Vector<Order> getPaidOrders() throws Exception{
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid';";
+		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid' ORDER BY ID DESC;";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;

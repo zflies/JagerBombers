@@ -20,6 +20,8 @@ import java.text.DecimalFormat;
 
 
 public class GiftPaymentDialog extends JDialog {
+	
+	private static final double taxRate = 1.08;
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtCardNumber;
@@ -29,6 +31,7 @@ public class GiftPaymentDialog extends JDialog {
 	private JLabel lblTotalRemaining;
 	private JButton btnApply;
 	private DecimalFormat df = new DecimalFormat("0.00");
+	private JTextField txtTip;
 
 
 	/**
@@ -44,7 +47,7 @@ public class GiftPaymentDialog extends JDialog {
 		
 		setResizable(false);
 		setTitle("GIFT - TABLE " + curOrder.getTableNumber() + " Payment");
-		setBounds(100, 100, 342, 279);
+		setBounds(100, 100, 342, 306);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -70,7 +73,7 @@ public class GiftPaymentDialog extends JDialog {
 				
 				// TODO: Need Form Validation
 				
-				String query = String.format("UPDATE Orders SET Status ='paid' WHERE ID ='%s';", curOrder.getOrderId() );
+				String query = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
 				
 				java.sql.Statement state = DBConnection.OpenConnection();
 				
@@ -85,13 +88,14 @@ public class GiftPaymentDialog extends JDialog {
 					System.err.println("Statement was null.  No connection?");
 				
 				curOrder.setStatus( Order.Status.Paid );
+				curOrder.setTotal( curOrder.getTotal() * taxRate );
 				
 				dispose();
 			}
 		});
 		btnPay.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
-		lblTotalRemaining = new JLabel("Total Remaining: $" + df.format( curOrder.getTotal() ) );
+		lblTotalRemaining = new JLabel("Total Remaining: $" + df.format( curOrder.getTotal() * taxRate ) );
 		lblTotalRemaining.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTotalRemaining.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
@@ -105,48 +109,65 @@ public class GiftPaymentDialog extends JDialog {
 			}
 		});
 		btnApply.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
+		
+		txtTip = new JTextField();
+		txtTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
+		txtTip.setColumns(10);
+		
+		JLabel lblTip = new JLabel("TIP:");
+		lblTip.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblTotalRemaining, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+						.addComponent(lblTotalRemaining, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(lblCardNumber, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
+							.addContainerGap()
+							.addComponent(lblTip, GroupLayout.PREFERRED_SIZE, 84, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(txtCardNumber, GroupLayout.PREFERRED_SIZE, 190, GroupLayout.PREFERRED_SIZE))
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(lblSecurityCode, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+							.addComponent(txtTip, GroupLayout.PREFERRED_SIZE, 133, GroupLayout.PREFERRED_SIZE))
+						.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+								.addComponent(lblSecurityCode, GroupLayout.PREFERRED_SIZE, 124, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblCardNumber, GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE))
+							.addGap(18)
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING, false)
 								.addGroup(gl_contentPanel.createSequentialGroup()
-									.addComponent(txtSecurityCode, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(btnApply, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)))))
+									.addComponent(txtSecurityCode, GroupLayout.PREFERRED_SIZE, 76, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(btnApply, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
+								.addComponent(txtCardNumber, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 170, GroupLayout.PREFERRED_SIZE))))
 					.addContainerGap())
+				.addGroup(gl_contentPanel.createSequentialGroup()
+					.addContainerGap(127, Short.MAX_VALUE)
+					.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
+					.addGap(124))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGap(16)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblCardNumber, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
-						.addComponent(txtCardNumber, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE))
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(txtCardNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblCardNumber, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-							.addComponent(lblSecurityCode, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-							.addComponent(txtSecurityCode, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnApply, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(txtSecurityCode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnApply, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblSecurityCode, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
+					.addGap(21)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblTip)
+						.addComponent(txtTip, GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblTotalRemaining, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-					.addGap(20)
+					.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
 		contentPanel.setLayout(gl_contentPanel);
 	}
-
 }

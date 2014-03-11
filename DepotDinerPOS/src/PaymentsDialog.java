@@ -27,12 +27,15 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 
 public class PaymentsDialog extends JDialog implements WindowFocusListener{
-
+	
+	private static final double taxRate = 1.08;
+	
 	private final JPanel contentPanel = new JPanel();
 	private JTable table;
-	private JLabel lblTotal;
+	private JLabel lblSubTotal;
 	private static TableColumnModel columns;
 	private static TableColumn column;
 	private JDialog dialogCashPayment;
@@ -48,10 +51,14 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	private Order splitOrder;
 	private Employee loggedInEmployee;
 	
+	private boolean needSplit;
+	
 	/**
 	 * Create the dialog.
 	 */
 	public PaymentsDialog( Employee employee, Order order, ArrayList<Double> itemCosts ) {
+		
+		needSplit = false;
 		
 		setResizable(false);
 		
@@ -85,13 +92,14 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		table.setFont(new Font("Lucida Grande", Font.PLAIN, 28));
 		table.setRowHeight(table.getRowHeight() + 17);
 	
-		lblTotal = new JLabel("TOTAL: $" +  df.format( curOrder.getTotal() ) );
-		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 37));
+		lblSubTotal = new JLabel( "Subtotal: $" +  df.format( curOrder.getTotal() ) );
+		lblSubTotal.setHorizontalAlignment(SwingConstants.LEFT);
+		lblSubTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 33));
 		
 		refreshReceipt( curOrder );
 		
 		setTitle("Payment for TABLE " + curOrder.getTableNumber() );
-		setBounds(100, 100, 675, 526);
+		setBounds(100, 100, 675, 496);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -206,12 +214,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-							.addGap(95)
-							.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED))
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -221,8 +224,14 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 								.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
 									.addComponent(btnCash, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
 									.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-									.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)))))
-					.addGap(5))
+									.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)))
+							.addGap(5))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(9)
+							.addComponent(lblSubTotal, GroupLayout.PREFERRED_SIZE, 515, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+							.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap())))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
@@ -240,10 +249,10 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(btnPrint, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 383, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-						.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)
-						.addComponent(btnCancel, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
+					.addGap(26)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSubTotal)
+						.addComponent(btnCancel, GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		
@@ -314,6 +323,8 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	 */
 	private void createSplitOrder( int[] selection ){
 		
+		needSplit = true;
+		
 		String items = "";
 		double totalPrice = 0.00;
 		
@@ -357,8 +368,10 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		{
 			dispose();
 		}
-		else if ( splitOrder != null )
+		else if ( splitOrder != null && needSplit )
 		{
+			needSplit = false;
+
 			if ( splitOrder.getStatus() == Order.Status.Paid )
 			{
 				// Modify curOrder to remove the split order items and update the DB
@@ -389,7 +402,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 					}
 				}
 
-				double total = curOrder.getTotal() - splitOrder.getTotal();
+				double total = curOrder.getTotal() - ( splitOrder.getTotal() / taxRate );
 
 				String query = String.format("UPDATE Orders SET `Items` = '%s', `Total` = '%s' WHERE ID = %s;", items, total, curOrder.getOrderId() );
 
@@ -407,7 +420,8 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 
 				curOrder.setItems( items );
 				curOrder.setTotal( total );
-				lblTotal.setText( "TOTAL: $" +  df.format( curOrder.getTotal() ) );
+				lblSubTotal.setText( "Subtotal: $" +  df.format( curOrder.getTotal() ) );
+				
 				refreshReceipt( curOrder );
 			}
 			else
@@ -436,5 +450,4 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	public void windowLostFocus(WindowEvent e) {
 		
 	}
-
 }

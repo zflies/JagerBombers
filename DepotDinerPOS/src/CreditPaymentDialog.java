@@ -22,11 +22,14 @@ import java.text.DecimalFormat;
 
 public class CreditPaymentDialog extends JDialog {
 
+	private static final double taxRate = 1.08;
+
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtTip;
-	private JTextField txtTotal;
-	private JLabel lblTotalCharge;
 	private JButton btnPay;
+	private JLabel lblSubtotal;
+	private JLabel lblTotal;
+	private JLabel lblTax;
 	private DecimalFormat df = new DecimalFormat("0.00");
 
 
@@ -43,123 +46,103 @@ public class CreditPaymentDialog extends JDialog {
 		
 		setResizable(false);
 		setTitle("CREDIT - TABLE " + curOrder.getTableNumber() + " Payment");
-		setBounds(100, 100, 342, 279);
+		setBounds(100, 100, 342, 308);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-		getContentPane().add(contentPanel, BorderLayout.CENTER);
+		getContentPane().add(contentPanel, BorderLayout.SOUTH);
 		
 		txtTip = new JTextField();
+		txtTip.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				lblTotal.setText("Total: $" + df.format( ( curOrder.getTotal() * taxRate ) + Double.parseDouble( txtTip.getText().toString() ) ) );
+			
+				btnPay.setEnabled( true );
+			};
+		});
+			
+		txtTip.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		txtTip.setColumns(10);
 		
-		txtTotal = new JTextField();
-		txtTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
-		txtTotal.setColumns(10);
-		
-		JLabel lblTotal = new JLabel("TOTAL: $" + df.format( curOrder.getTotal() ));
-		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
+		lblSubtotal = new JLabel("Subtotal: $" + df.format( curOrder.getTotal() ) );
+		lblSubtotal.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblSubtotal.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		final JLabel lblTip = new JLabel("TIP:");
-		lblTip.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTip.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		
-		lblTotalCharge = new JLabel("TOTAL:");
-		lblTotalCharge.setHorizontalAlignment(SwingConstants.LEFT);
-		lblTotalCharge.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
-		
 		btnPay = new JButton("PAY");
+		btnPay.setEnabled(false);
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				double totalCharge = Double.parseDouble( txtTotal.getText() );
-				double totalCost = curOrder.getTotal();
-				double tipAmount = Double.parseDouble( txtTip.getText() );
-				
-				// TODO: Need Form Validation
-				if (  totalCharge != totalCost + tipAmount )
-				{
-					if ( totalCharge < totalCost )
-					{
-						JOptionPane optionPane = new JOptionPane();
-						optionPane.setMessage("Charged amount does not cover ticket.");
-						JDialog dialog = optionPane.createDialog("Insufficient Funds");
-						dialog.setAlwaysOnTop(true);
-						dialog.setVisible(true);
+
+				String query = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
+
+				java.sql.Statement state = DBConnection.OpenConnection();
+
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
 					}
-					else
-					{
-						JOptionPane optionPane = new JOptionPane();
-						optionPane.setMessage("The amount being charged does not equal the sum of the tip and ticket cost.");
-						JDialog dialog = optionPane.createDialog("Incorrect Entry");
-						dialog.setAlwaysOnTop(true);
-						dialog.setVisible(true);
-					}	
 				}
 				else
-				{
-					String query = String.format("UPDATE Orders SET Status ='paid' WHERE ID ='%s';", curOrder.getOrderId() );
-					
-					java.sql.Statement state = DBConnection.OpenConnection();
-					
-					if(state != null){
-						try {
-							state.execute(query);
-						} catch (SQLException e1) {
-							System.err.println("Error in SQL Execution");
-							}
-					}
-					else
-						System.err.println("Statement was null.  No connection?");
-					
-					curOrder.setStatus( Order.Status.Paid );
-					
-					dispose();
-				}
+					System.err.println("Statement was null.  No connection?");
+
+				curOrder.setStatus( Order.Status.Paid );
+				curOrder.setTotal( curOrder.getTotal() * taxRate );
+
+				dispose();
 			}
+
 		});
 		btnPay.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		
+		lblTotal = new JLabel( "Total: $" + df.format( curOrder.getTotal() * taxRate ) );
+		lblTotal.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 28));
+		
+		lblTax = new JLabel( "Tax: $" + df.format( curOrder.getTotal() * (taxRate - 1) ) );
+		lblTax.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblTax.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
-								.addGroup(gl_contentPanel.createSequentialGroup()
-									.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblTotalCharge)
-										.addComponent(lblTip, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING, false)
-										.addGroup(gl_contentPanel.createSequentialGroup()
-											.addGap(18)
-											.addComponent(txtTip, GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
-										.addGroup(gl_contentPanel.createSequentialGroup()
-											.addGap(18)
-											.addComponent(txtTotal, 0, 0, Short.MAX_VALUE)))
-									.addPreferredGap(ComponentPlacement.RELATED, 81, Short.MAX_VALUE)))
-							.addContainerGap())
+							.addGap(123)
+							.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 81, GroupLayout.PREFERRED_SIZE)
-							.addGap(121))))
+							.addContainerGap()
+							.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 320, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addGap(12)
+							.addComponent(lblTip, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(txtTip, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING, false)
+							.addComponent(lblTax, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(lblSubtotal, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)))
+					.addContainerGap())
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
+					.addComponent(lblSubtotal, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblTax)
+					.addGap(23)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 						.addComponent(txtTip, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblTip, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtTotal, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblTotalCharge, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+					.addComponent(lblTotal, GroupLayout.PREFERRED_SIZE, 41, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
 					.addComponent(btnPay, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);

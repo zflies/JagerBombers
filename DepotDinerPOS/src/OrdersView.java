@@ -123,7 +123,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		columnNamesAllOrders.clear();
 		columnNamesAllOrders.add("TABLE");
 		columnNamesAllOrders.add("ORDER DESCRIPTION");
-		columnNamesAllOrders.add("TOTAL");
+		columnNamesAllOrders.add("SUBTOTAL");
 		
 		columnNamesViewOrder.clear();
 		columnNamesViewOrder.add("ITEM");
@@ -270,7 +270,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		lblTable = new JLabel("TABLE:");
 		lblTable.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
-		lblTotal = new JLabel("TOTAL: $0.00");
+		lblTotal = new JLabel("Subtotal: $0.00");
 		lblTotal.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
@@ -442,7 +442,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	        	}
 	            
 	            lblTableNumber.setText( String.valueOf( curOrder.getTableNumber() ) );
-	            lblTotal.setText( "Total: $" + df.format( curOrder.getTotal() ) );
+	            lblTotal.setText( "Subtotal: $" + df.format( curOrder.getTotal() ) );
 	            
 	            String items = curOrder.getItems();
 	            
@@ -519,7 +519,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		EmployeeAllOrdersTableData.clear();
 		EmployeeViewOrderTableData.clear();
 		lblTableNumber.setText( "0" );
-        lblTotal.setText( "Total: $0.00" );
+        lblTotal.setText( "Subtotal: $0.00" );
 
 		//Get the orders for the logged in employee								
 		try {
