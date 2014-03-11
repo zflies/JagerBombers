@@ -16,14 +16,15 @@ Program Description
 ------------------------------------------------------------------------
 1. The Login Window will serve as the program's security.  Each time an
    employee wishes to interact with this application, they must enter
-   their employee specific PIN, with the exception of the Kitchen Staff.
+   their employee specific PIN, with the exception of the Kitchen Staff
+   who will share a common PIN for screen access.
 
    a. After entering a PIN and selecting "Submit," the program will
       distinguise the type of employee you are (i.e. Wait Staff,
       Kitchen Staff, or Manager/Owner)
-      
-   b. For the time being, the PIN for all Wait Staff is 1, Kitchen Staff
-      is 2, and for Managers/Owners it is 3.
+
+   b. The PIN is established when an employee is added to the staff by
+      a manager.  Please consult the DB Admin if you forgot your PIN.
       
 2. Depding on the type of employee, a view will be loaded (i.e. Wait
    Staff View, Kitchen View, and Manager/Owner View).  Once the employee
@@ -47,11 +48,10 @@ Program Description
       empolyees that work at Steve's Depot Diner with the feature to add
       a new employee.  If an employee is selected, a panel of features on 
       the right side of the page will allow the manager to Clock In/Out
-      the employee, View the orders in progress for that server, view the
-      payroll/hours of that server, and also the option to delete that
-      worker from the system.  The last feature will allow the manager to
-      generate a report for the day providing a deatailed description of
-      the day.
+      the employee, view the weekly hours worked of that server, and also
+      the option to delete that worker from the system.  The last featur
+      will allow the manager to generate a report for the day providing
+      a deatailed description of the day.
 
 
   
