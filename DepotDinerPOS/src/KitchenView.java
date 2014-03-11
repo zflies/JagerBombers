@@ -65,7 +65,25 @@ public class KitchenView extends JFrame {
 				        state.close();
 				        return;
 					}
-					else {
+					else if ( result == 0 )
+					{
+						commandstring= String.format("DELETE FROM Orders WHERE Table_No = '%s' AND Items = '%s' AND status = 'addition';", tableNumber, items);
+						try {
+							state.execute(commandstring);
+							
+							//delete row from table
+					        ((DefaultTableModel)table.getModel()).removeRow(modelRow);
+					        state.close();
+					        return;
+							
+						} catch (SQLException e1) {
+							System.err.println("Error in SQL Execution");
+							
+						}
+
+					}
+					else 
+					{
 						return;
 					}
 				} catch (SQLException e1) {

@@ -38,13 +38,28 @@ private static JButton btnCreate;
 private JTable ordersTable;
 private JLabel lblTotal;
 private String column_names[]= {"Item","Notes","Price"};
-private DecimalFormat df = new DecimalFormat("#.00");
+private DecimalFormat df = new DecimalFormat("0.00");
 
 
 /**
 * Create the frame.
 */
-public DinnerView( final Employee loggedInEmployee ) {
+public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
+	
+	final String[] tables = new String[25];
+	
+	if ( curOrder != null )
+	{
+		tables[0] = String.valueOf( curOrder.getTableNumber() );
+	}
+	else
+	{
+		for ( int i = 0; i < 25; i++ )
+		{
+			tables[i] = "" + ( i + 1 );
+		}
+	}
+	
 	setTitle("Steve's Depot Diner");
 	setExtendedState(JFrame.MAXIMIZED_BOTH);
 	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -52,8 +67,7 @@ public DinnerView( final Employee loggedInEmployee ) {
 	contentPane = new JPanel();
 	contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 	setContentPane(contentPane);
-	String[] tables = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15",
-	"16", "17", "18", "19", "20", "21", "22", "23", "24", "25"};
+
 	
 	JLabel lblTable = new JLabel("Table");
 	lblTable.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
@@ -74,11 +88,47 @@ public DinnerView( final Employee loggedInEmployee ) {
 			
 			String employeePIN = "(SELECT PIN FROM Employees WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
 															"AND LastName = '" + loggedInEmployee.getLastName() + "')";
-			int tableNumber = tableNumberComboBox.getSelectedIndex() + 1;
+			int tableNumber = Integer.parseInt( tables[ tableNumberComboBox.getSelectedIndex() ] );
 			String itemsCSV = createOrderCSV();
 			double totalPrice = getCurrentTotal();
-			String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES (%s, '%s', '%s', 'entered', '%s');", employeePIN, tableNumber, itemsCSV, totalPrice);
+			String status = "entered";
+			
+			if ( curOrder != null )
+			{
+				status = "addition";
+			}
+				
+			String query = String.format("INSERT INTO `avalenti`.`Orders` (`E_PIN`, `Table_No`, `Items`, `Status`, `Total`) VALUES (%s, '%s', '%s', '%s', '%s');", employeePIN, tableNumber, itemsCSV, status , totalPrice);
+			
 			placeOrder(query);
+			
+			// Need to update curOrder to include newly entered data
+			if ( curOrder != null )
+			{
+				String curItems = curOrder.getItems();
+				double curTotal = curOrder.getTotal();
+				
+				curItems += ", " + itemsCSV;
+				curTotal += totalPrice;
+				
+				query = String.format("UPDATE Orders SET `Items` = '%s', `Total` = '%s' WHERE ID = %s;", curItems, curTotal, curOrder.getOrderId() );
+
+				java.sql.Statement state = DBConnection.OpenConnection();
+
+				if(state != null){
+					try {
+						state.execute(query);
+					} catch (SQLException e1) {
+						System.err.println("Error in SQL Execution");
+					}
+				}
+				else
+					System.err.println("Statement was null.  No connection?");
+
+				curOrder.setItems( curItems );
+				curOrder.setTotal( curTotal );
+			}
+			
 			dispose();
 		}
 	});

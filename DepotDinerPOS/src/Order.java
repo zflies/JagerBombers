@@ -8,7 +8,8 @@ public class Order {
 		Entered,
 		Served,
 		Split,
-		Paid;
+		Paid,
+		Addition;
 	}
 	
 	private int OrderId;
@@ -31,6 +32,8 @@ public class Order {
 			this.State = Status.Served;
 		else if(status.compareTo("split") == 0)
 			this.State = Status.Split;
+		else if(status.compareTo("addition") == 0)
+			this.State = Status.Addition;
 		else 
 			this.State = Status.Entered;
 		this.Total = total;
@@ -66,6 +69,8 @@ public class Order {
 					return "Paid";
 			case Split:
 					return "Split";
+			case Addition:
+					return "Addition";
 			default:
 					return null;
 		}
@@ -148,7 +153,7 @@ public class Order {
 		
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE (Status = 'entered' OR Status = 'servered') " +
+		String commandstring = "SELECT * FROM Orders WHERE (Status = 'entered' OR Status = 'served') " +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
 							   										"AND LastName = '" + loggedInEmployee.getLastName() + "') ORDER BY ID ASC;";
@@ -233,7 +238,7 @@ public class Order {
 	public static Vector<Order> getEnteredOrders() throws Exception{
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'entered'; ";//AND E_PIN = {SELECT PIN FROM Employee WHERE FirstName = fname AND LastName = lastname;};";
+		String commandstring = "SELECT * FROM Orders WHERE (Status = 'entered' OR Status = 'addition'); ";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
@@ -253,9 +258,12 @@ public class Order {
 					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
 					OrderVector.add(new_order);
 				}
+				/*// I don't think it is necessary to show an alert dialog every few seconds if there are no pending orders.  
+				  //    
 				if(OrderVector.size() == 0) {
 					throw new Exception("No Pending Orders");
 				}
+				*/
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 				throw new Exception("Error in SQL Execution");

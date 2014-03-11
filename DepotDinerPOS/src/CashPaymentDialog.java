@@ -127,12 +127,12 @@ public class CashPaymentDialog extends JDialog {
 		lblTotal.setFont(new Font("Lucida Grande", Font.PLAIN, 28));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+			gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap(127, Short.MAX_VALUE)
 					.addComponent(btnPay)
 					.addGap(124))
-				.addGroup(Alignment.TRAILING, gl_contentPanel.createSequentialGroup()
+				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblTotal, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
 					.addContainerGap())
@@ -145,7 +145,8 @@ public class CashPaymentDialog extends JDialog {
 							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPanel.createSequentialGroup()
 									.addGap(24)
-									.addComponent(lblChange, GroupLayout.PREFERRED_SIZE, 159, GroupLayout.PREFERRED_SIZE))
+									.addComponent(lblChange, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+									.addGap(8))
 								.addGroup(gl_contentPanel.createSequentialGroup()
 									.addGap(18)
 									.addComponent(txtCash, GroupLayout.PREFERRED_SIZE, 173, GroupLayout.PREFERRED_SIZE))))
