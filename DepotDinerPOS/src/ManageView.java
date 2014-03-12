@@ -66,6 +66,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private String selectedEmployeeFirstName;
 	private String selectedEmployeeLastName;
 	private SharedListSelectionHandler selectionHandler;
+	private ReservationDialog Reservation;
 	ListSelectionModel listSelectionModel;
 
 	String column_names[]= {"Last Name","First Name"};
@@ -109,6 +110,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	private Employee loggedInEmployee;
+	private JButton btnViewResrvations;
 
 
 	/**
@@ -271,62 +273,77 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		JButton btnGenerateReport = new JButton("Generate Report");
 
 		JScrollPane scrollPane = new JScrollPane();
+		
+		btnViewResrvations = new JButton("View Reservations");
+		btnViewResrvations.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Reservation = new ReservationDialog();
+				Reservation.setVisible(true);
+				Reservation.setLocationRelativeTo(null);
+				Reservation.setAlwaysOnTop(true);
+			}
+		});
 		GroupLayout gl_panel_manage = new GroupLayout(panel_manage);
 		gl_panel_manage.setHorizontalGroup(
-				gl_panel_manage.createParallelGroup(Alignment.TRAILING)
+			gl_panel_manage.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panel_manage.createSequentialGroup()
-						.addGap(20)
-						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 311, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
-						.addGroup(gl_panel_manage.createParallelGroup(Alignment.TRAILING)
-								.addGroup(gl_panel_manage.createSequentialGroup()
-										.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING, false)
-												.addComponent(btnViewOrders, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-												.addGroup(gl_panel_manage.createSequentialGroup()
-														.addComponent(btnClockIn, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-														.addGap(77)
-														.addComponent(btnClockOut))
-														.addComponent(btnViewPayrollhours, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-														.addGap(85))
-														.addGroup(gl_panel_manage.createSequentialGroup()
-																.addComponent(btnDelete)
-																.addGap(183))
-																.addGroup(gl_panel_manage.createSequentialGroup()
-																		.addComponent(lblEmployeeName)
-																		.addGap(176))))
-																		.addGroup(gl_panel_manage.createSequentialGroup()
-																				.addGap(89)
-																				.addComponent(btnAddEmployee)
-																				.addPreferredGap(ComponentPlacement.RELATED, 321, Short.MAX_VALUE)
-																				.addComponent(btnGenerateReport, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-																				.addGap(147))
-				);
+					.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_manage.createSequentialGroup()
+							.addGap(89)
+							.addComponent(btnAddEmployee))
+						.addGroup(gl_panel_manage.createSequentialGroup()
+							.addGap(20)
+							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 311, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
+					.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, gl_panel_manage.createParallelGroup(Alignment.TRAILING)
+							.addGroup(gl_panel_manage.createSequentialGroup()
+								.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING, false)
+									.addComponent(btnViewOrders, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addGroup(gl_panel_manage.createSequentialGroup()
+										.addComponent(btnClockIn, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+										.addGap(77)
+										.addComponent(btnClockOut))
+									.addComponent(btnViewPayrollhours, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGap(85))
+							.addGroup(gl_panel_manage.createSequentialGroup()
+								.addComponent(btnDelete)
+								.addGap(183))
+							.addGroup(gl_panel_manage.createSequentialGroup()
+								.addComponent(lblEmployeeName)
+								.addGap(176)))
+						.addGroup(Alignment.TRAILING, gl_panel_manage.createSequentialGroup()
+							.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnViewResrvations, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnGenerateReport, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
+							.addGap(127))))
+		);
 		gl_panel_manage.setVerticalGroup(
-				gl_panel_manage.createParallelGroup(Alignment.LEADING)
+			gl_panel_manage.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_manage.createSequentialGroup()
-						.addGap(22)
-						.addGroup(gl_panel_manage.createParallelGroup(Alignment.TRAILING)
-								.addGroup(Alignment.LEADING, gl_panel_manage.createSequentialGroup()
-										.addComponent(lblEmployeeName)
-										.addGap(32)
-										.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
-												.addComponent(btnClockIn)
-												.addComponent(btnClockOut))
-												.addGap(31)
-												.addComponent(btnViewOrders)
-												.addGap(17)
-												.addComponent(btnViewPayrollhours)
-												.addGap(14)
-												.addComponent(btnDelete)
-												.addGap(79))
-												.addGroup(gl_panel_manage.createSequentialGroup()
-														.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
-														.addPreferredGap(ComponentPlacement.RELATED)))
-														.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
-																.addComponent(btnAddEmployee)
-																.addComponent(btnGenerateReport))
-																.addGap(11))
-				);
+					.addGap(22)
+					.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING)
+						.addGroup(gl_panel_manage.createSequentialGroup()
+							.addComponent(lblEmployeeName)
+							.addGap(32)
+							.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnClockIn)
+								.addComponent(btnClockOut))
+							.addGap(31)
+							.addComponent(btnViewOrders)
+							.addGap(17)
+							.addComponent(btnViewPayrollhours)
+							.addGap(14)
+							.addComponent(btnDelete)
+							.addPreferredGap(ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+							.addComponent(btnViewResrvations))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnAddEmployee)
+						.addComponent(btnGenerateReport))
+					.addGap(11))
+		);
 
 		DefaultTableModel table_model= new DefaultTableModel(column_names, 0);
 		employeeTable = new JTable(table_model);

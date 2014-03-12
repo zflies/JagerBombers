@@ -6,9 +6,9 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-
 import javax.swing.JTabbedPane;
 
 import java.awt.event.ActionListener;
@@ -19,6 +19,12 @@ import java.util.Vector;
 
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Font;
 
 
 public class KitchenView extends JFrame {
@@ -100,12 +106,14 @@ public class KitchenView extends JFrame {
 	};
 	
 	private JTable getOrders() throws Exception{
-		JTable table = new JTable();
+		String ColumnNames[] = {"Table Number", "Items", "Complete"};
+		DefaultTableModel newModel = new DefaultTableModel(ColumnNames, 0);
+		JTable table = new JTable(newModel);
+		TableColumnModel tcm = table.getColumnModel();
+		//tcm.getColumn(0).setPreferredWidth(100);
+		
 		Vector<Order> Orders;
-		DefaultTableModel newModel = new DefaultTableModel();
-		newModel.addColumn("TableNumber");
-		newModel.addColumn("Items");
-		newModel.addColumn("Complete");
+		
 		try {
 			Orders = Order.getEnteredOrders();
 			//add rows to table
@@ -142,10 +150,8 @@ public class KitchenView extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		contentPane.add(tabbedPane);
 		
 		JPanel OrdersTab = new JPanel();
 		tabbedPane.addTab("Orders", null, OrdersTab, null);
@@ -161,7 +167,35 @@ public class KitchenView extends JFrame {
 			return;
 		}
 		
-		OrdersTab.add(table);
+		OrdersTab.add(new JScrollPane(table));
+		
+		JButton btnExit = new JButton("Exit");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LoginWindow Login = new LoginWindow();
+				Login.setVisible(true);
+				Login.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				dispose();
+			}
+		});
+		btnExit.setFont(new Font("Dialog", Font.PLAIN, 16));
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addContainerGap(325, Short.MAX_VALUE)
+					.addComponent(btnExit)
+					.addContainerGap())
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnExit))
+		);
+		contentPane.setLayout(gl_contentPane);
 		
 		//create and start timer to re-create table every 5 secs
 		int delay = 5000;
@@ -170,6 +204,7 @@ public class KitchenView extends JFrame {
 		    	  try {
 					JTable newTable = getOrders();
 					table.setModel(newTable.getModel());
+					table.setColumnModel(newTable.getColumnModel());
 					ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
