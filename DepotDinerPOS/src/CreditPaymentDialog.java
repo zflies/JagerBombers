@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -17,7 +18,10 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class CreditPaymentDialog extends JDialog {
@@ -78,13 +82,26 @@ public class CreditPaymentDialog extends JDialog {
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				String query = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
+				int pin = curOrder.getEmployeePin();
+
+				double tax = curOrder.getTotal() * ( taxRate - 1);
+				double price = curOrder.getTotal();
+				double tip = Double.parseDouble( txtTip.getText().toString() );
+				double total = price + tax + tip;
+				
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				Date date = new Date();
+				
+				String queryStatus = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
+	
+				String queryPayment = String.format("INSERT INTO `avalenti`.`Payments` (`Order_ID`, `E_PIN`, `Date`, `Tip`, `Price`, `Tax`, `Total`) VALUES (%s, %s, '%s', %s, %s, %s, %s);", curOrder.getOrderId(), pin, dateFormat.format(date).toString(), tip, price , tax, total);
 
 				java.sql.Statement state = DBConnection.OpenConnection();
-
+				
 				if(state != null){
 					try {
-						state.execute(query);
+						state.execute(queryStatus);
+						state.execute(queryPayment);
 					} catch (SQLException e1) {
 						System.err.println("Error in SQL Execution");
 					}

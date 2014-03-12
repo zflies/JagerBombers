@@ -209,6 +209,9 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			}
 		});
 		btnCancel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		
+		JButton btnDeposit = new JButton("APPLY DEPOSIT");
+		btnDeposit.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
@@ -216,16 +219,23 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnPrint, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-								.addComponent(btnSplitTicket, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-								.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
-									.addComponent(btnCash, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-									.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
-									.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)))
-							.addGap(5))
+							.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
+										.addComponent(btnPrint, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+										.addGroup(gl_contentPanel.createParallelGroup(Alignment.TRAILING)
+											.addComponent(btnCash, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+											.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+											.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)))
+									.addGap(5))
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addComponent(btnDeposit, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+									.addContainerGap())
+								.addGroup(gl_contentPanel.createSequentialGroup()
+									.addComponent(btnSplitTicket, GroupLayout.PREFERRED_SIZE, 191, GroupLayout.PREFERRED_SIZE)
+									.addContainerGap())))
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addGap(9)
 							.addComponent(lblSubTotal, GroupLayout.PREFERRED_SIZE, 515, GroupLayout.PREFERRED_SIZE)
@@ -244,9 +254,11 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 							.addComponent(btnCreditCard, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 							.addGap(18)
 							.addComponent(btnGiftCard, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-							.addGap(90)
-							.addComponent(btnSplitTicket, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(btnDeposit, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnSplitTicket, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnPrint, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE))
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 383, GroupLayout.PREFERRED_SIZE))
 					.addGap(26)

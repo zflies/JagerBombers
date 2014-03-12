@@ -109,7 +109,7 @@ public class Order {
 		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid'" +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
-							   										"AND LastName = '" + loggedInEmployee.getLastName() + "');";
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "') ORDER BY ID DESC;";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;
