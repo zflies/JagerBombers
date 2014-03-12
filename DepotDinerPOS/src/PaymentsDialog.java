@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -200,6 +201,11 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnSplitTicket.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JButton btnPrint = new JButton("PRINT RECEIPT");
+		btnPrint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(contentPanel, "Printing...", "", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		btnPrint.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JButton btnCancel = new JButton("CANCEL");
