@@ -3,12 +3,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
 
 public class Reservation {
 	private String Name;
 	private Date Date;
 	private int Size;
 	private double Deposit;
+	private String Shown;
 	
 	public static double SmallDeposit = 50.00;
 	public static double LargeDeposit = 75.00;
@@ -18,6 +20,18 @@ public class Reservation {
 		this.Name = name;
 		this.Date = date;
 		this.Size = size;
+		this.Shown = "No";
+		if(size <= SmallPartyLimit)
+			this.Deposit = SmallDeposit;
+		else
+			this.Deposit = LargeDeposit;
+	}
+	
+	public Reservation(String name, Date date, int size, String shown){
+		this.Name = name;
+		this.Date = date;
+		this.Size = size;
+		this.Shown = shown;
 		if(size <= SmallPartyLimit)
 			this.Deposit = SmallDeposit;
 		else
@@ -39,6 +53,10 @@ public class Reservation {
 	public double getDeposit(){
 		return Deposit;
 	}
+	
+	public String getShown(){
+		return Shown;
+	}
 
 	public void addToDB() throws Exception {
 		Statement state = DBConnection.OpenConnection();
@@ -58,5 +76,63 @@ public class Reservation {
 			System.err.println("Statement was null.  No connection?");
 		
 		state.close();
+	}
+	
+	public static Vector<Reservation> getTodayReservations() throws Exception{
+		Vector<Reservation> ReservationVector = new Vector<Reservation>();
+		Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM Reservations WHERE DATE_FORMAT(DateTime, '%Y-%m-%d') = CURDATE() AND Shown = 'No'; ";
+		String Name;
+		Date Date;
+		int Size;
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				while(rs.next()) {
+					Name = rs.getString("Name");
+					Date = rs.getDate("DateTime");
+					Size = rs.getInt("Size");
+					Reservation cur_reservation = new Reservation(Name, Date, Size);
+					ReservationVector.add(cur_reservation);
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		state.close();
+		return ReservationVector;
+	}
+	
+	public static Vector<Reservation> getAllReservations() throws Exception{
+		Vector<Reservation> ReservationVector = new Vector<Reservation>();
+		Statement state = DBConnection.OpenConnection();
+		String commandstring = "SELECT * FROM Reservations;";
+		String Name;
+		Date Date;
+		int Size;
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(commandstring);
+				while(rs.next()) {
+					Name = rs.getString("Name");
+					Date = rs.getDate("DateTime");
+					Size = rs.getInt("Size");
+					Reservation cur_reservation = new Reservation(Name, Date, Size);
+					ReservationVector.add(cur_reservation);
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		state.close();
+		return ReservationVector;
 	}
 }
