@@ -78,6 +78,12 @@ public class ReservationDialog extends JDialog {
 	 * Create the frame.
 	 */
 	public ReservationDialog() {
+		addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent arg0) {
+				refreshTable();
+			}
+		});
 		setResizable(false);
 		setTitle("Reservations");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
