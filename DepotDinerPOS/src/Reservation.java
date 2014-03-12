@@ -78,6 +78,26 @@ public class Reservation {
 		state.close();
 	}
 	
+	public void updateShown() throws Exception{
+		 //update order in DB to "served"
+		this.Shown = "Yes";
+        Statement state = DBConnection.OpenConnection();
+		String commandstring = "UPDATE Reservations SET Shown = 'Yes' WHERE Name = '" + this.Name + "' AND Size = " + this.Size + " AND DateTime = '" + new java.sql.Timestamp(this.getDate().getTime()) + "' AND Shown = 'No';";
+		
+		if(state != null){
+			try {
+				state.execute(commandstring);
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				throw new Exception("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		state.close();
+	}
+	
 	public static Vector<Reservation> getTodayReservations() throws Exception{
 		Vector<Reservation> ReservationVector = new Vector<Reservation>();
 		Statement state = DBConnection.OpenConnection();
@@ -113,15 +133,17 @@ public class Reservation {
 		String commandstring = "SELECT * FROM Reservations;";
 		String Name;
 		Date Date;
+		String Shown;
 		int Size;
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
 				while(rs.next()) {
 					Name = rs.getString("Name");
-					Date = rs.getDate("DateTime");
+					Date = new Date(rs.getTimestamp("DateTime").getTime());
 					Size = rs.getInt("Size");
-					Reservation cur_reservation = new Reservation(Name, Date, Size);
+					Shown = rs.getString("Shown");
+					Reservation cur_reservation = new Reservation(Name, Date, Size, Shown);
 					ReservationVector.add(cur_reservation);
 				}
 			} catch (SQLException e) {

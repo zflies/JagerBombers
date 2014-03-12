@@ -106,7 +106,6 @@ public class Order {
 		
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		//TODO: needs to return an order. This gets all the current days payments
 		String commandstring = "SELECT * FROM Orders, (SELECT * FROM Payments WHERE Date = CURDATE()" +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
