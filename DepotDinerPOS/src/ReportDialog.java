@@ -28,7 +28,7 @@ public class ReportDialog extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 	private JTable reportTable;
 	private DecimalFormat df = new DecimalFormat("0.00");
-	private String column_names[]= {"Last Name","First Name","Hours Worked","Tips Earned"};
+	private String column_names[]= {"Last Name","First Name","Weekly Hours","Daily Hours","Tips Earned"};
 
 	/**
 	 * Launch the application.
@@ -99,7 +99,8 @@ public class ReportDialog extends JDialog {
 		String lastName;
 		String pin;
 		String position;
-		double hoursWorked;
+		double hoursWorkedWeek;
+		double hoursWorkedDay;
 		double tipsEarned = 0.00;
 		java.sql.Statement state = DBConnection.OpenConnection();
 		DefaultTableModel model = (DefaultTableModel) reportTable.getModel();
@@ -112,11 +113,15 @@ public class ReportDialog extends JDialog {
 					lastName = rs.getString("LastName");
 					pin = rs.getString("PIN");
 					position = rs.getString("Position");
-					hoursWorked = getHoursWorked(pin);
+					//boolean value here signifies whether you want the hours for the week or the current day
+					//true - get hours for current day
+					//false - get hours for current week
+					hoursWorkedWeek = getHoursWorked(pin, false); 
+					hoursWorkedDay = getHoursWorked(pin, true);
 					if((position.compareTo("Staff") == 0) || (position.compareTo("Manager") == 0)){
 						tipsEarned = getTips(pin);
 					}
-					model.addRow(new Object[]{lastName, firstName, df.format(hoursWorked), "$" + df.format(tipsEarned)});
+					model.addRow(new Object[]{lastName, firstName, df.format(hoursWorkedWeek), df.format(hoursWorkedDay), "$" + df.format(tipsEarned)});
 				}
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
@@ -149,14 +154,18 @@ public class ReportDialog extends JDialog {
 		return tipsTotal;
 	}
 	
-	private double getHoursWorked(String pin){
+	private double getHoursWorked(String pin, boolean getDay){
 		java.sql.Statement state = DBConnection.OpenConnection();
 		double hoursTotal = 0.00;
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		Date date = c.getTime();
-		String query = String.format("SELECT C_IN, C_OUT FROM avalenti.Hours WHERE E_PIN = %s AND C_IN >= '%s';", pin, dateFormat.format(date).toString() + " 00:00:00");
+		String query = String.format("SELECT C_IN, C_OUT FROM avalenti.Hours WHERE E_PIN = %s AND C_IN >= '%s' AND C_OUT > '%s';", pin, dateFormat.format(date).toString() + " 00:00:00", "0000-00-00 00:00:00");
+		if(getDay){
+			date = new Date();
+			query = String.format("SELECT C_IN, C_OUT FROM avalenti.Hours WHERE E_PIN = %s AND C_IN >= '%s' AND C_OUT > '%s';", pin, dateFormat.format(date).toString() + " 00:00:00", "0000-00-00 00:00:00");
+		}
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(query);
@@ -167,6 +176,7 @@ public class ReportDialog extends JDialog {
 					hoursTotal += hoursWorked;
 				}
 			} catch (SQLException e) {
+				System.out.println(e.getMessage());
 				System.err.println("Error in SQL Execution");
 			}
 		}
