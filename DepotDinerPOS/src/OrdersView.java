@@ -332,7 +332,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 				
 		columns = tableViewOrder.getColumnModel();
 		column = columns.getColumn(1);
-		column.setMinWidth(250);
+		column.setMinWidth(320);
 		column.setMaxWidth(450);
 		
 		column = columns.getColumn(2);
@@ -453,32 +453,60 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	            ItemCosts.clear();
 	            
 	            String item = "";
+	            String note = "";
 	            double cost = 0.0;
 	            
 	            int i = 0;
+	            
+	            /* Parse for multiple items */
 	            for ( int j = 0; j < items.length(); j++ )
 	            {
 	            	if ( items.charAt(j) == ',' )
 	            	{
-	            		item = items.substring(i, j);
-	            		cost = getItemPrice( item );
-	            		ItemCosts.add( cost );
+	            		item = items.substring( i, j );
+	            		
+	            		// Parse for the Note
+	            		for ( int k = 0; k < item.length(); k++ )
+	            		{
+	            			if ( item.charAt(k) == '-' )
+	            			{
+	            				note = item.substring( k + 1 );
+	            				item = item.substring( 0, k );
+	            				break;
+	            			}
+	            		}
+	  
 	    	            Vector<String> curItem = new Vector<String>();  	            
 	    	            curItem.add( item );
-	    	            curItem.add(""); // TODO: Is there even a notes section for creating orders?
-	    	            curItem.add( df.format( cost ) ); // TODO: Query for item price?
+	    	            curItem.add( note ); 
+	            		cost = getItemPrice( item );
+	            		ItemCosts.add( cost );
+	    	            curItem.add( df.format( cost ) );
 	    	            
 	            		EmployeeViewOrderTableData.addElement( curItem );
 	            		i = j + 2;
 	            	}
 	            }
 	            
+	            /* Parse for the last item */
 	            item = items.substring(i);
+	            
+	            // Parse for the Note
+	            for ( int k = 0; k < item.length(); k ++ )
+        		{
+        			if ( item.charAt(k) == '-' )
+        			{
+        				note = item.substring( k + 1 );
+        				item = item.substring( 0, k );
+        				break;
+        			}
+        		}
+	            
         		cost = getItemPrice( item );
         		ItemCosts.add( cost );
 	            Vector<String> curItem = new Vector<String>();
 	            curItem.add( item );
-	            curItem.add(""); // TODO: Is there even a notes section for creating orders?
+	            curItem.add(note); // TODO: Is there even a notes section for creating orders?
 	            curItem.add( df.format( cost ) ); // TODO: Query for item price?
         		EmployeeViewOrderTableData.add( curItem );
 	           	            
@@ -486,7 +514,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 
 			    columns = tableViewOrder.getColumnModel();
 				column = columns.getColumn(1);
-				column.setMinWidth(250);
+				column.setMinWidth(320);
 				column.setMaxWidth(450);
 				
 				column = columns.getColumn(2);

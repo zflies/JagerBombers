@@ -815,6 +815,11 @@ public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
 				csv += ", "; // Add the comma here.  This will prevent appending ',' on the last item	
 			}
 			csv += inner.elementAt(0);
+			
+			if ( inner.elementAt(1) != "" )
+			{
+				csv += "-" + inner.elementAt(1);
+			}
 		}
 		return csv;
 	}
