@@ -1,6 +1,7 @@
 
 
 import java.awt.BorderLayout;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -10,6 +11,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+
 import java.awt.Font;
 
 import javax.swing.SwingConstants;
@@ -18,6 +20,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class CashPaymentDialog extends JDialog {
@@ -95,14 +99,26 @@ public class CashPaymentDialog extends JDialog {
 		btnPay.setEnabled(false);
 		btnPay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				String query = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
+				
+				Calendar calendar = Calendar.getInstance();
+				String date = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH) + 1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+				double tax = curOrder.getTotal() * ( taxRate - 1);
+				double price = curOrder.getTotal();
+				double tip = 0.0;
+				double total = price + tax + tip;
+				
+				int pin = curOrder.getEmployeePin();
+				String queryStatus = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
+				
+				/* I cannot seem to get this to work.  Any ideas? */
+				String queryPayment = String.format("INSERT INTO `avalenti`.`Payments` ('Order_ID', `E_PIN`, `Date`, `Tip`, `Price`, `Tax`, 'Total' ) VALUES (%s, '%s', '%s', '%s', '%s', '%s', %s');", curOrder.getOrderId(), pin, date, tip, price , tax, total);
 				
 				java.sql.Statement state = DBConnection.OpenConnection();
 				
 				if(state != null){
 					try {
-						state.execute(query);
+						state.execute(queryStatus);
+						state.execute(queryPayment);
 					} catch (SQLException e1) {
 						System.err.println("Error in SQL Execution");
 						}
@@ -112,6 +128,7 @@ public class CashPaymentDialog extends JDialog {
 				
 				curOrder.setStatus( Order.Status.Paid );
 				curOrder.setTotal( curOrder.getTotal() * taxRate );
+				
 				
 				dispose();
 			}
