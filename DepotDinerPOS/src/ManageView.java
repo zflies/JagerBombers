@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +62,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private String employeeName;
 	private JTable employeeTable;
 	private JLabel lblEmployeeName;
+	private JLabel lblWeeklyHours;
 	private JButton btnClockIn;
 	private JButton btnClockOut;
 	private JButton btnDelete;
@@ -69,7 +71,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private SharedListSelectionHandler selectionHandler;
 	private ReservationDialog Reservation;
 	ListSelectionModel listSelectionModel;
-
+	
 	String column_names[]= {"Last Name","First Name"};
 
 	/* ORDERS Tab */
@@ -96,6 +98,8 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	
 	private static final double DINNER_DISCOUNT = 1.00;
 	private static final double BREAKFAST_DISCOUNT = 0.50;
+	private static final double PART_TIME_WARNING = 28.00;
+	private static final double PART_TIME_LIMIT = 30.00;
 
 	private static final int BREAKFAST_HOUR = 11;
 
@@ -240,10 +244,6 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			}
 		});
 
-		JButton btnViewOrders = new JButton("View Orders");
-
-		JButton btnViewPayrollhours = new JButton("View Payroll/Hours");
-
 		btnDelete = new JButton("Delete");
 
 		btnDelete.addActionListener(new ActionListener() {
@@ -295,6 +295,9 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				Reservation.setAlwaysOnTop(true);
 			}
 		});
+		
+		lblWeeklyHours = new JLabel("Weekly Hours:");
+		lblWeeklyHours.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		GroupLayout gl_panel_manage = new GroupLayout(panel_manage);
 		gl_panel_manage.setHorizontalGroup(
 			gl_panel_manage.createParallelGroup(Alignment.TRAILING)
@@ -306,29 +309,29 @@ public class ManageView extends JFrame implements WindowFocusListener{
 						.addGroup(gl_panel_manage.createSequentialGroup()
 							.addGap(20)
 							.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 311, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED, 166, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 142, Short.MAX_VALUE)
 					.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_panel_manage.createParallelGroup(Alignment.TRAILING)
-							.addGroup(gl_panel_manage.createSequentialGroup()
-								.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING, false)
-									.addComponent(btnViewOrders, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addGroup(gl_panel_manage.createSequentialGroup()
-										.addComponent(btnClockIn, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
-										.addGap(77)
-										.addComponent(btnClockOut))
-									.addComponent(btnViewPayrollhours, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-								.addGap(85))
-							.addGroup(gl_panel_manage.createSequentialGroup()
-								.addComponent(btnDelete)
-								.addGap(183))
-							.addGroup(gl_panel_manage.createSequentialGroup()
-								.addComponent(lblEmployeeName)
-								.addGap(176)))
 						.addGroup(Alignment.TRAILING, gl_panel_manage.createSequentialGroup()
 							.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING, false)
 								.addComponent(btnViewResrvations, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(btnGenerateReport, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE))
-							.addGap(127))))
+							.addGap(127))
+						.addGroup(Alignment.TRAILING, gl_panel_manage.createSequentialGroup()
+							.addGroup(gl_panel_manage.createParallelGroup(Alignment.TRAILING, false)
+								.addGroup(Alignment.LEADING, gl_panel_manage.createSequentialGroup()
+									.addGap(20)
+									.addComponent(lblWeeklyHours, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+								.addGroup(gl_panel_manage.createSequentialGroup()
+									.addComponent(btnClockIn, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+									.addGap(77)
+									.addComponent(btnClockOut)))
+							.addGap(85))
+						.addGroup(Alignment.TRAILING, gl_panel_manage.createSequentialGroup()
+							.addComponent(lblEmployeeName)
+							.addGap(158))
+						.addGroup(Alignment.TRAILING, gl_panel_manage.createSequentialGroup()
+							.addComponent(btnDelete)
+							.addGap(188))))
 		);
 		gl_panel_manage.setVerticalGroup(
 			gl_panel_manage.createParallelGroup(Alignment.LEADING)
@@ -336,20 +339,19 @@ public class ManageView extends JFrame implements WindowFocusListener{
 					.addGap(22)
 					.addGroup(gl_panel_manage.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_panel_manage.createSequentialGroup()
+							.addGap(1)
 							.addComponent(lblEmployeeName)
-							.addGap(32)
+							.addGap(18)
+							.addComponent(lblWeeklyHours)
+							.addGap(18)
 							.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnClockIn)
 								.addComponent(btnClockOut))
-							.addGap(31)
-							.addComponent(btnViewOrders)
-							.addGap(17)
-							.addComponent(btnViewPayrollhours)
-							.addGap(14)
+							.addGap(18)
 							.addComponent(btnDelete)
-							.addPreferredGap(ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 286, Short.MAX_VALUE)
 							.addComponent(btnViewResrvations))
-						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE))
+						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel_manage.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnAddEmployee)
@@ -369,6 +371,16 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				 */
 				System.out.println("ACTUALLY CLICKED ENTRY");
 				updateButtons();
+				int pin = getEmployeePin();
+				String position = getEmployeeType(pin);
+				double hours = getHoursWorked(String.valueOf(pin));
+				lblWeeklyHours.setText("Weekly Hours: " + df.format(hours));
+				if(hours >= PART_TIME_WARNING && hours < PART_TIME_LIMIT && position.compareTo("part-time") == 0){
+					JOptionPane.showMessageDialog(frame, "ATTENTION: Part-Time Employee Approaching 30 Hours!!");
+				}
+				else if(hours >= PART_TIME_LIMIT && position.compareTo("part-time") == 0){
+					JOptionPane.showMessageDialog(frame, "ATTENTION: Part-Time Employee Over 30 Hours!!");
+				}
 			}
 		});
 		listSelectionModel = employeeTable.getSelectionModel();
@@ -894,6 +906,25 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			System.err.println("Statement was null.  No connection?");
 		return pin;
 	}
+	
+	private String getEmployeeType(int pin){
+		java.sql.Statement state = DBConnection.OpenConnection();
+		String type = "Staff";
+		String query = String.format("SELECT Type FROM avalenti.Employees WHERE PIN = %s;", pin);
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(query);
+				if(rs.next() == true) {
+					type =  rs.getString("Type");
+				}
+			} catch (SQLException e) {
+				System.err.println("Error in SQL Execution");
+			}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		return type;
+	}
 
 	private void updateButtons() {
 		updateEmployeeName();
@@ -973,6 +1004,50 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		
 		return itemPrice;
 	
+	}
+	
+	private double getHoursWorked(String pin){
+		java.sql.Statement state = DBConnection.OpenConnection();
+		double hoursTotal = 0.00;
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		Date date = c.getTime();
+		String query = String.format("SELECT C_IN, C_OUT FROM avalenti.Hours WHERE E_PIN = %s AND C_IN >= '%s' AND C_OUT > '%s';", pin, dateFormat.format(date).toString() + " 00:00:00", "0000-00-00 00:00:00");
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(query);
+				while(rs.next() == true) {
+					String clockIn = rs.getString("C_IN");
+					String clockOut = rs.getString("C_OUT");
+					double hoursWorked = calculateElapsedTime(clockIn, clockOut);
+					hoursTotal += hoursWorked;
+				}
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+				System.err.println("Error in SQL Execution");
+			}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		return hoursTotal;
+	}
+	
+	private double calculateElapsedTime(String clockIn, String clockOut){
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	 
+		try { 
+			Date startDate = formatter.parse(clockIn);
+			Date endDate = formatter.parse(clockOut);
+			
+			return endDate.getHours() - startDate.getHours() + ((endDate.getMinutes() - startDate.getMinutes()) / 60.00);
+	 
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return 0.00;
 	}
 	
 	private String getDay(){
