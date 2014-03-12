@@ -106,10 +106,11 @@ public class Order {
 		
 		Vector<Order> OrderVector = new Vector<Order>();
 		Statement state = DBConnection.OpenConnection();
-		String commandstring = "SELECT * FROM Orders WHERE Status = 'paid'" +
+		//TODO: needs to return an order. This gets all the current days payments
+		String commandstring = "SELECT * FROM Orders, (SELECT * FROM Payments WHERE Date = CURDATE()" +
 							   						"AND E_PIN = (SELECT PIN FROM Employees " + 
 							   										"WHERE FirstName = '" + loggedInEmployee.getFirstName() +"' " +
-							   										"AND LastName = '" + loggedInEmployee.getLastName() + "') ORDER BY ID DESC;";
+							   										"AND LastName = '" + loggedInEmployee.getLastName() + "')) AS P1 WHERE Orders.ID = P1.Order_ID ORDER BY ID DESC;"; //ORDER BY ID DESC;";
 		int ID = 0;
 		int E_PIN = 0;
 		int Table_No = 0;

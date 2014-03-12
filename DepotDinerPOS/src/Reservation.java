@@ -10,9 +10,9 @@ public class Reservation {
 	private int Size;
 	private double Deposit;
 	
-	public static double SmallDeposit = 10.00;
-	public static double LargeDeposit = 50.00;
-	public static int SmallPartyLimit = 10;
+	public static double SmallDeposit = 50.00;
+	public static double LargeDeposit = 75.00;
+	public static int SmallPartyLimit = 20;
 	
 	public Reservation(String name, Date date, int size){
 		this.Name = name;
