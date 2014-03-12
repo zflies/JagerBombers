@@ -110,7 +110,7 @@ public class Reservation {
 				ResultSet rs = state.executeQuery(commandstring);
 				while(rs.next()) {
 					Name = rs.getString("Name");
-					Date = rs.getDate("DateTime");
+					Date = new Date(rs.getTimestamp("DateTime").getTime());
 					Size = rs.getInt("Size");
 					Reservation cur_reservation = new Reservation(Name, Date, Size);
 					ReservationVector.add(cur_reservation);

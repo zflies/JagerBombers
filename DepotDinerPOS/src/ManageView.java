@@ -36,6 +36,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -69,7 +70,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	private String selectedEmployeeFirstName;
 	private String selectedEmployeeLastName;
 	private SharedListSelectionHandler selectionHandler;
-	private ReservationDialog Reservation;
+	private ReservationDialog ReservationDialog;
 	ListSelectionModel listSelectionModel;
 	
 	String column_names[]= {"Last Name","First Name"};
@@ -289,10 +290,10 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		btnViewResrvations = new JButton("View Reservations");
 		btnViewResrvations.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Reservation = new ReservationDialog();
-				Reservation.setVisible(true);
-				Reservation.setLocationRelativeTo(null);
-				Reservation.setAlwaysOnTop(true);
+				ReservationDialog = new ReservationDialog();
+				ReservationDialog.setVisible(true);
+				ReservationDialog.setLocationRelativeTo(null);
+				ReservationDialog.setAlwaysOnTop(true);
 			}
 		});
 		
@@ -803,6 +804,25 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		setFocusTraversalPolicy(new FocusTraversalOnArray(new Component[]{tableAllOrders, btnHistory, btnCreateOrder, tableViewOrder, btnAddToOrder, btnPayment, btnExit}));
 
 		addWindowFocusListener(this);
+		
+		//get reservations for today and display alert
+		try {
+			Vector<Reservation> Reservations = Reservation.getTodayReservations();
+			if(Reservations.size() == 0)
+				return;
+			else{
+				String message = "Reservation(s) today:\n";
+				for(int i = 0; i < Reservations.size(); i++){
+					Reservation curReservation = Reservations.elementAt(i);
+					message = message + curReservation.getName() + " at " + (new Timestamp(curReservation.getDate().getTime()).toString()).toString().substring(11,16) + "\n";
+					curReservation.updateShown();
+				}
+				JOptionPane.showMessageDialog(frame, message, "Reservations", JOptionPane.INFORMATION_MESSAGE);
+			}
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+
+		}
 	}
 
 	private void refreshEmployeeTable(){
