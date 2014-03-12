@@ -56,6 +56,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 	/* MANAGE Tab */
 	private JPanel contentPane;
 	private JDialog dialogAddEmployee;
+	private JDialog dialogReport;
 	private static ManageView frame;
 	private String employeeName;
 	private JTable employeeTable;
@@ -271,6 +272,17 @@ public class ManageView extends JFrame implements WindowFocusListener{
 		});
 		
 		JButton btnGenerateReport = new JButton("Generate Report");
+		btnGenerateReport.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dialogReport = new ReportDialog();
+				dialogReport.setVisible(true);
+
+				dialogReport.setLocationRelativeTo(null);
+				dialogReport.setTitle("Daily Report");
+
+				dialogReport.setAlwaysOnTop(true);	
+			}
+		});
 
 		JScrollPane scrollPane = new JScrollPane();
 		
