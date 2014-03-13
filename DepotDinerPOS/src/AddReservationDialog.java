@@ -68,7 +68,7 @@ public class AddReservationDialog extends JDialog {
 		String Time = textFieldTime.getText();
 		int Size = (Integer) spinnerSize.getValue();
 		String dateRegex = "\\d{4}-\\d{2}-\\d{2}";
-		String timeRegex = "(1[012]|[1-9]):[0-5][0-9](\\s)?(?i)(am|pm)";
+		String timeRegex = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
 		
 		if(Name.compareTo("") != 0)
 			name = true;
@@ -81,7 +81,7 @@ public class AddReservationDialog extends JDialog {
 		if(Time.matches(timeRegex))
 			time = true;
 		else
-			throw(new Exception("Time field must match TT:TT (am|pm) (ex. 8:30 am or 12:00 pm)"));
+			throw(new Exception("Time field must match TT:TT (ex. 14:00, 8:30)"));
 		if(Size != 0)
 			size = true;
 		else
@@ -220,7 +220,7 @@ public class AddReservationDialog extends JDialog {
 						Date Date;
 						//parse date and time to get a Date object
 						try {
-							Date = new SimpleDateFormat("yyyy-MM-d h:m a").parse(date + " " + time);
+							Date = new SimpleDateFormat("yyyy-MM-d k:m").parse(date + " " + time);
 							System.out.println(Date.toString());
 						} catch (ParseException e1) {
 							e1.printStackTrace();
