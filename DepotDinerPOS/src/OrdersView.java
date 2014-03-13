@@ -119,7 +119,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: OrdersView Constructor");
 			return ;
 		}
 		
@@ -581,7 +581,7 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("SQL Error: OrdersView - RefreshTableData()");
 			return ;
 		}
 

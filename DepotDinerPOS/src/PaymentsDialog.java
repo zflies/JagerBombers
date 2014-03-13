@@ -403,7 +403,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			newTotal = 0.00;
 		}
 		
-		String query = String.format("UPDATE Orders SET `Total` = '%s' WHERE ID = %s;", newTotal, curOrder.getOrderId() );
+		String query = String.format("UPDATE Orders SET `Total` = '%s', `Deposit` = '%s' WHERE ID = %s;", newTotal, deposit, curOrder.getOrderId() );
 
 		java.sql.Statement state = DBConnection.OpenConnection();
 

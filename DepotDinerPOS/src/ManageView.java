@@ -426,7 +426,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: ManageView - getEmployeeOrdersInProgress()");
 			return ;
 		}
 
@@ -828,7 +828,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				JOptionPane.showMessageDialog(frame, message, "Reservations", JOptionPane.INFORMATION_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: ManageView - getTodayReservations()");
 
 		}
 	}
@@ -1134,7 +1134,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: ManageView - getEmployeeOrderInProgress()");
 			return ;
 		}
 

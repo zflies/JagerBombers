@@ -163,7 +163,7 @@ public class KitchenView extends JFrame {
 		try {
 			table = getOrders();
 		} catch (Exception e2) {
-			JOptionPane.showMessageDialog(frame, e2.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: KitchenView - getOrders()");
 			return;
 		}
 		
@@ -207,7 +207,7 @@ public class KitchenView extends JFrame {
 					table.setColumnModel(newTable.getColumnModel());
 					ButtonColumn buttonColumn = new ButtonColumn(table, delete, 2);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+					System.err.println("Error: KitchenView ActionListener task");
 					return;
 				}
 		      }

@@ -58,6 +58,7 @@ public class ApplyDepositDialog extends JDialog {
 				Reservation selection = reservations.get( table.getSelectedRow() );
 				
 				deposit = selection.getDeposit();
+				
 				String name = selection.getName();
 				int size = selection.getSize();
 				Date date = selection.getDate();

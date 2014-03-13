@@ -54,7 +54,7 @@ public class ReservationDialog extends JDialog {
 			
 			table.setModel(Model);
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(contentPane, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: ReservationDialog - refreshTable()");
 		}
 	}
 	

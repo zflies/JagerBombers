@@ -64,7 +64,7 @@ public class OrderHistoryDialog extends JDialog {
 			}
 		} catch (Exception e) {
 			//Some error occurred in either connecting to DB or there weren't any orders to be cooked
-			JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Error: OrderHistoryDialog - getEmployeePaidOrder()");
 			return ;
 		}
 		
