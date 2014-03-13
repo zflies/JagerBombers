@@ -845,6 +845,7 @@ public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
 					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}
@@ -887,6 +888,7 @@ public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
 		if(state != null){
 			try {
 				state.execute(query);
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}

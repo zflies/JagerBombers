@@ -124,6 +124,7 @@ public class BreakfastView extends JFrame {
 					if(state != null){
 						try {
 							state.execute(query);
+							state.close();
 						} catch (SQLException e1) {
 							System.err.println("Error in SQL Execution");
 						}
@@ -697,6 +698,7 @@ public class BreakfastView extends JFrame {
 					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}
@@ -738,6 +740,7 @@ public class BreakfastView extends JFrame {
 		if(state != null){
 			try {
 				state.execute(query);
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}
