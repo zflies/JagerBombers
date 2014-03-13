@@ -69,25 +69,25 @@ public class AddEmployeeDialog extends JDialog {
 		JLabel lblAddEmployee = new JLabel("Add Employee");
 		lblAddEmployee.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
 		
-		JLabel lblFirstName = new JLabel("First Name:");
+		JLabel lblFirstName = new JLabel("First Name* :");
 		lblFirstName.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		textFieldFirstName = new JTextField();
 		textFieldFirstName.setColumns(10);
 		
-		JLabel lblLastName = new JLabel("Last Name:");
+		JLabel lblLastName = new JLabel("Last Name* :");
 		lblLastName.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		textFieldLastName = new JTextField();
 		textFieldLastName.setColumns(10);
 		
-		JLabel lblPin = new JLabel("PIN:");
+		JLabel lblPin = new JLabel("PIN *:");
 		lblPin.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		textFieldPin = new JTextField();
 		textFieldPin.setColumns(10);
 		
-		JLabel lblPosition = new JLabel("Position:");
+		JLabel lblPosition = new JLabel("Position* :");
 		lblPosition.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		final JComboBox comboBoxPosition = new JComboBox(positions);
@@ -113,6 +113,18 @@ public class AddEmployeeDialog extends JDialog {
 					String position = comboBoxPosition.getSelectedItem().toString();
 					String type = comboBoxType.getSelectedItem().toString();
 					
+					
+					if(firstName.compareTo("") == 0 || lastName.compareTo("") == 0 || pin.compareTo("") == 0 || position.compareTo("") == 0 || type.compareTo("") == 0 ){
+						JOptionPane.showMessageDialog(contentPanel, "All fields are required!");
+						return;
+					}
+					
+					try {
+						int pinTest = Integer.parseInt(pin);
+					} catch (NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(contentPanel, "PIN must contain only numbers!");
+						return;
+					}
 					java.sql.Statement state = DBConnection.OpenConnection();
 					String query = String.format("INSERT INTO `avalenti`.`Employees` (`FirstName`, `LastName`, `PIN`, `Position`, `Type`) VALUES ('%s', '%s', %s, '%s', '%s');", firstName, lastName, pin, position, type);
 					if(state != null){
@@ -149,7 +161,7 @@ public class AddEmployeeDialog extends JDialog {
 			buttonPane.setLayout(gl_buttonPane);
 		}
 		
-		JLabel lblType = new JLabel("Type:");
+		JLabel lblType = new JLabel("Type* :");
 		lblType.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		comboBoxType = new JComboBox(types);
