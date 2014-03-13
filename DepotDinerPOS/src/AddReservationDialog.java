@@ -81,7 +81,7 @@ public class AddReservationDialog extends JDialog {
 		if(Time.matches(timeRegex))
 			time = true;
 		else
-			throw(new Exception("Time field must match TT:TT (am|pm)"));
+			throw(new Exception("Time field must match TT:TT (am|pm) (ex. 8:30 am or 12:00 pm)"));
 		if(Size != 0)
 			size = true;
 		else
@@ -210,6 +210,7 @@ public class AddReservationDialog extends JDialog {
 							checkFields();
 						} catch (Exception e1) {
 							JOptionPane.showMessageDialog(contentPanel, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+							return;
 						}
 						//add new reservation to DB
 						String name = textFieldName.getText();
