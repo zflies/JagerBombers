@@ -10,12 +10,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -27,7 +28,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 
-public class ReservationDialog extends JDialog {
+public class ReservationDialog extends JDialog implements WindowFocusListener{
 
 	private JPanel contentPane;
 	private JTable table;
@@ -36,8 +37,8 @@ public class ReservationDialog extends JDialog {
 	private String ColumnNames[] = {"Name", "Date/Time", "Size", "Deposit"};
 	private Vector<Reservation> reservations;
 
-	private void refreshTable(){
-		Model = new DefaultTableModel(ColumnNames, 0);
+	private DefaultTableModel refreshTable(){
+		DefaultTableModel newModel = new DefaultTableModel(ColumnNames, 0);
 		//get all reservations and add to table
 		try {
 			reservations = Reservation.getAllReservations();
@@ -49,12 +50,12 @@ public class ReservationDialog extends JDialog {
 				Row.add((new Timestamp(curReservation.getDate().getTime()).toString()));
 				Row.add(String.valueOf(curReservation.getSize()));
 				Row.add(String.valueOf(curReservation.getDeposit()));
-				Model.addRow(Row);
+				newModel.addRow(Row);
 			}
-			
-			table.setModel(Model);
+			return newModel;
 		} catch (Exception e1) {
-			System.err.println("Error: ReservationDialog - refreshTable()");
+			JOptionPane.showMessageDialog(contentPane, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 	}
 	
@@ -204,11 +205,21 @@ public class ReservationDialog extends JDialog {
 					.addContainerGap())
 		);
 		
-		table = new JTable();
+		addWindowFocusListener(this);
+		
+		table = new JTable(refreshTable());
 		scrollPane.setViewportView(table);
 		panel.setLayout(gl_panel);
 		contentPane.setLayout(gl_contentPane);
+	}
+
+	@Override
+	public void windowGainedFocus(WindowEvent arg0) {
+		table.setModel(refreshTable());
+	}
+
+	@Override
+	public void windowLostFocus(WindowEvent arg0) {
 		
-		refreshTable();
 	}
 }
