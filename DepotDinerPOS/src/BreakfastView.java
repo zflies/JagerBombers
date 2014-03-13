@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -89,6 +90,12 @@ public class BreakfastView extends JFrame {
 																"AND LastName = '" + loggedInEmployee.getLastName() + "')";
 				int tableNumber = Integer.parseInt( tables[ tableNumberComboBox.getSelectedIndex() ] );
 				String itemsCSV = createOrderCSV();
+				if(itemsCSV.compareTo("") == 0){
+					//empty order, don't let staff member proceed.
+					System.out.println("Please enter an item to order!");
+					JOptionPane.showMessageDialog(contentPane, "Please enter an item to order!");
+					return;
+				}
 				double totalPrice = getCurrentTotal();
 				String status = "entered";
 
