@@ -28,6 +28,7 @@ import javax.swing.JComboBox;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -121,10 +122,16 @@ public class AddEmployeeDialog extends JDialog {
 					
 					try {
 						int pinTest = Integer.parseInt(pin);
+						if(testPin(pin)){
+							//pin exists, have them select a new one
+							JOptionPane.showMessageDialog(contentPanel, "PIN already exists, choose a new one!");
+							return;
+						}
 					} catch (NumberFormatException nfe) {
 						JOptionPane.showMessageDialog(contentPanel, "PIN must contain only numbers!");
 						return;
 					}
+					
 					java.sql.Statement state = DBConnection.OpenConnection();
 					String query = String.format("INSERT INTO `avalenti`.`Employees` (`FirstName`, `LastName`, `PIN`, `Position`, `Type`) VALUES ('%s', '%s', %s, '%s', '%s');", firstName, lastName, pin, position, type);
 					if(state != null){
@@ -234,5 +241,26 @@ public class AddEmployeeDialog extends JDialog {
 					.addComponent(buttonPane, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
+	}
+	
+	private boolean testPin(String pin){
+		java.sql.Statement state = DBConnection.OpenConnection();
+		boolean pinExists = true;
+		String query = String.format("SELECT * FROM `avalenti`.`Employees` WHERE PIN = %s", pin);
+		if(state != null){
+			try {
+				ResultSet rs = state.executeQuery(query);
+				if(rs.next() == false){
+					pinExists = false;
+				}
+			} catch (SQLException exception) {
+				System.err.println("Error in SQL Execution");
+				}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+		
+		return pinExists;
+		
 	}
 }
