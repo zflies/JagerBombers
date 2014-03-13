@@ -120,7 +120,7 @@ public class CashPaymentDialog extends JDialog {
 				
 				String queryStatus = String.format("UPDATE Orders SET Status ='paid', Total = '%s' WHERE ID ='%s';", curOrder.getTotal() * taxRate, curOrder.getOrderId() );
 	
-				String queryPayment = String.format("INSERT INTO `avalenti`.`Payments` (`Order_ID`, `E_PIN`, `Date`, `Tip`, `Price`, `Tax`, `Total`) VALUES (%s, %s, '%s', %s, %s, %s, %s);", curOrder.getOrderId(), pin, dateFormat.format(date).toString(), tip, price , tax, total);
+				String queryPayment = String.format("INSERT INTO `avalenti`.`Payments` (`Order_ID`, `E_PIN`, `Date`, `Tip`, `Price`, `Tax`, `Total`) VALUES (%s, %s, '%s', %s, %s, %s, %s);", curOrder.getOrderId(), pin, dateFormat.format(date).toString(), tip, price , tax, total + curOrder.getDeposit() );
 
 				java.sql.Statement state = DBConnection.OpenConnection();
 				

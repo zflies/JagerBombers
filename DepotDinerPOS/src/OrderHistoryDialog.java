@@ -51,7 +51,7 @@ public class OrderHistoryDialog extends JDialog {
 
 				Order curOrder = EmployeeAllOrders.elementAt(i);
 				
-				double total = curOrder.getTotal();
+				double total = curOrder.getTotal() + curOrder.getDeposit();
 				Vector<String> order = new Vector<String>();
 
 				order.add( Integer.toString(curOrder.getTableNumber()) );
