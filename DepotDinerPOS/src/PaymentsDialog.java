@@ -504,12 +504,14 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 				if(state != null){
 					try {
 						state.execute(query);
+						state.close();
 					} catch (SQLException e1) {
 						System.err.println("Error in SQL Execution");
 					}
 				}
 				else
 					System.err.println("Statement was null.  No connection?");
+				
 
 			}
 		}

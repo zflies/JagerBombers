@@ -121,9 +121,11 @@ public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
 				if(state != null){
 					try {
 						state.execute(query);
+						state.close();
 					} catch (SQLException e1) {
 						System.err.println("Error in SQL Execution");
 					}
+					
 				}
 				else
 					System.err.println("Statement was null.  No connection?");
@@ -131,7 +133,6 @@ public DinnerView( final Employee loggedInEmployee, final Order curOrder ) {
 				curOrder.setItems( curItems );
 				curOrder.setTotal( curTotal );
 			}
-			
 			dispose();
 		}
 	});

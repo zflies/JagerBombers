@@ -609,12 +609,14 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
+				state.close();
+
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}
 		}
 		else
-			System.err.println("Statement was null.  No connection?");
+			System.err.println("Statement was null.  No connection?");	
 		
 		if(special.compareTo(getDay()) == 0){
 			

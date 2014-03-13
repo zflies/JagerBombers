@@ -16,7 +16,12 @@ import javax.swing.JTable;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Vector;
 
 
@@ -29,7 +34,6 @@ public class ApplyDepositDialog extends JDialog {
 	private Vector<Reservation> reservations;
 	
 	private double deposit = 0.00;
-
 
 	/**
 	 * Create the dialog.
@@ -50,6 +54,31 @@ public class ApplyDepositDialog extends JDialog {
 				// TODO: Get row selection, determine deposit amount
 				// 		 Query DB to remove this reservation
 				//deposit = 
+				
+				Reservation selection = reservations.get( table.getSelectedRow() );
+				
+				deposit = selection.getDeposit();
+				String name = selection.getName();
+				int size = selection.getSize();
+				Date date = selection.getDate();
+				
+				try {	
+					Statement state = DBConnection.OpenConnection();
+					String commandstring = "DELETE FROM Reservations WHERE "
+							+ "Name = '"+ name + "' AND DateTime = '" + new Timestamp(date.getTime()) + "' "
+							+ "AND Size = "+ size + " AND Deposit = "+ deposit + ";";
+
+					if(state != null){
+						state.execute(commandstring);
+					}
+					else
+						System.err.println("Statement was null.  No connection?");
+
+					state.close();
+
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				
 				setVisible(false);
 				dispose();

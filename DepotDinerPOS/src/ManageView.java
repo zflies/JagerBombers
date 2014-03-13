@@ -867,6 +867,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 					entry = lastName + "," + firstName;
 					employeeList.add(entry);
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 			}
@@ -906,6 +907,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				if(rs.next() == true) {
 					clockedIn = true;
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 			}
@@ -926,6 +928,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				if(rs.next() == true) {
 					pin =  Integer.parseInt(rs.getString("PIN"));
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 			}
@@ -945,6 +948,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 				if(rs.next() == true) {
 					type =  rs.getString("Type");
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 			}
@@ -1010,6 +1014,7 @@ public class ManageView extends JFrame implements WindowFocusListener{
 					special = rs.getString("Special");
 					itemPrice = Double.parseDouble(rs.getString("Price"));
 				}
+				state.close();
 			} catch (SQLException e) {
 				System.err.println("Error in SQL Execution");
 				}
