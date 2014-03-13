@@ -128,6 +128,8 @@ public class GiftPaymentDialog extends JDialog {
 		btnApply.setFont(new Font("Lucida Grande", Font.PLAIN, 17));
 		
 		txtTip = new JTextField();
+		txtTip.setText("0");
+		txtTip.setHorizontalAlignment(SwingConstants.RIGHT);
 		txtTip.setFont(new Font("Lucida Grande", Font.PLAIN, 18));
 		txtTip.setColumns(10);
 		

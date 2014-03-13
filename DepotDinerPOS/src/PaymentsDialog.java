@@ -42,6 +42,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	private JDialog dialogCashPayment;
 	private JDialog dialogCreditPayment;
 	private JDialog dialogGiftPayment;
+	private ApplyDepositDialog depositDialog;
 	
 	private static Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();
 	private static ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage
@@ -217,6 +218,15 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnCancel.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		
 		JButton btnDeposit = new JButton("APPLY DEPOSIT");
+		btnDeposit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				depositDialog = new ApplyDepositDialog();
+				depositDialog.setVisible(true);
+				depositDialog.setLocationRelativeTo(null);
+				depositDialog.setAlwaysOnTop(true);	
+			}
+		});
 		btnDeposit.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
@@ -378,9 +388,51 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			e.printStackTrace();
 		}		
 	}
+	
+	/**
+	 * This will retrieve the deposit info from the user's reservation selection and apply the deposit to the orders total.
+	 */
+	private void getDepositInfo() {
+		
+		double deposit = depositDialog.getDeposit();
+		
+		double newTotal = curOrder.getTotal() - deposit;				
+		
+		if ( newTotal < 0.00 )
+		{
+			newTotal = 0.00;
+		}
+		
+		String query = String.format("UPDATE Orders SET `Total` = '%s' WHERE ID = %s;", newTotal, curOrder.getOrderId() );
+
+		java.sql.Statement state = DBConnection.OpenConnection();
+
+		if(state != null){
+			try {
+				state.execute(query);
+			} catch (SQLException e1) {
+				System.err.println("Error in SQL Execution");
+			}
+		}
+		else
+			System.err.println("Statement was null.  No connection?");
+
+		curOrder.setTotal( newTotal );
+
+		lblSubTotal.setText( "Subtotal: $" +  df.format( newTotal ) );
+		
+		refreshReceipt( curOrder );
+		
+		depositDialog = null;
+	}
 
 	@Override
 	public void windowGainedFocus(WindowEvent e) {
+		
+		if ( depositDialog != null )
+		{
+			getDepositInfo();
+		}
 		
 		if ( curOrder.getStatus() == Order.Status.Paid )
 		{

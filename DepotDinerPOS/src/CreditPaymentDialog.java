@@ -56,6 +56,7 @@ public class CreditPaymentDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.SOUTH);
 		
 		txtTip = new JTextField();
+		txtTip.setText("0");
 		txtTip.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				

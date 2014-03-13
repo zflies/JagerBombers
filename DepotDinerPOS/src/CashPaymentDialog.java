@@ -63,6 +63,8 @@ public class CashPaymentDialog extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
 		txtCash = new JTextField();
+		txtCash.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtCash.setText("0");
 		txtCash.setEnabled(false);
 		txtCash.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){

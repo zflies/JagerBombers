@@ -254,18 +254,21 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 		btnAddToOrder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
-					System.out.println("Opening Breakfast Menu!");
-					BreakfastView breakfast = new BreakfastView( loggedInEmployee, EmployeeAllOrders.get( tableAllOrders.getSelectedRow() ) );
-					breakfast.setVisible(true);
-					breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
+				if ( !EmployeeAllOrders.isEmpty() )
+				{
+					if(calendar.get(Calendar.HOUR_OF_DAY) <= BREAKFAST_HOUR){
+						System.out.println("Opening Breakfast Menu!");
+						BreakfastView breakfast = new BreakfastView( loggedInEmployee, EmployeeAllOrders.get( tableAllOrders.getSelectedRow() ) );
+						breakfast.setVisible(true);
+						breakfast.setExtendedState(JFrame.MAXIMIZED_BOTH);
+					}
+					else{
+						System.out.println("Opening Dinner Menu!");
+						DinnerView dinner = new DinnerView( loggedInEmployee, EmployeeAllOrders.get( tableAllOrders.getSelectedRow() ) );
+						dinner.setVisible(true);
+						dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
+					}	
 				}
-				else{
-					System.out.println("Opening Dinner Menu!");
-					DinnerView dinner = new DinnerView( loggedInEmployee, EmployeeAllOrders.get( tableAllOrders.getSelectedRow() ) );
-					dinner.setVisible(true);
-					dinner.setExtendedState(JFrame.MAXIMIZED_BOTH);
-				}	
 			}
 		});
 		btnAddToOrder.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
@@ -461,6 +464,10 @@ public class OrdersView extends JFrame implements WindowFocusListener{
 	            /* Parse for multiple items */
 	            for ( int j = 0; j < items.length(); j++ )
 	            {
+	            	item = "";
+	            	note = "";
+	            	cost = 0.0;
+	            	
 	            	if ( items.charAt(j) == ',' )
 	            	{
 	            		item = items.substring( i, j );
