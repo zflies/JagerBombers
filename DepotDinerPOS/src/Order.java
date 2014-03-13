@@ -18,8 +18,9 @@ public class Order {
 	private String Items;
 	private Status State;
 	private double Total;
+	private double Deposit;
 	
-	public Order(int orderId, int employeePin, int tableNumber, String items, String status, double total){
+	public Order(int orderId, int employeePin, int tableNumber, String items, String status, double total, double deposit){
 		this.OrderId = orderId;
 		this.EmployeePin = employeePin;
 		this.TableNumber = tableNumber;
@@ -37,6 +38,7 @@ public class Order {
 		else 
 			this.State = Status.Entered;
 		this.Total = total;
+		this.Deposit = deposit;
 	}
 	
 	public int getOrderId(){
@@ -57,6 +59,10 @@ public class Order {
 	
 	public Status getStatus(){
 		return this.State;
+	}
+	
+	public double getDeposit(){
+		return this.Deposit;
 	}
 	
 	public String getStringStatus(){
@@ -88,6 +94,10 @@ public class Order {
 		this.Total = total;
 	}
 	
+	public void setDeposit(double deposit){
+		this.Deposit = deposit;
+	}
+	
 	public void setTableNumber(int newTableNumber){
 		this.TableNumber = newTableNumber;
 	}
@@ -115,6 +125,7 @@ public class Order {
 		int Table_No = 0;
 		String Items = "";
 		String Status = "";
+		double Deposit = 0.0;
 		double Total = 0.0;
 		if(state != null){
 			try {
@@ -126,7 +137,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 
@@ -163,6 +175,7 @@ public class Order {
 		String Items = "";
 		String Status = "";
 		double Total = 0.0;
+		double Deposit = 0.0;
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
@@ -173,7 +186,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 
@@ -209,6 +223,8 @@ public class Order {
 		String Items = "";
 		String Status = "";
 		double Total = 0.0;
+		double Deposit = 0.0;
+
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
@@ -219,7 +235,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 
@@ -245,6 +262,8 @@ public class Order {
 		String Items = "";
 		String Status = "";
 		double Total = 0.0;
+		double Deposit = 0.0;
+
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
@@ -255,7 +274,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 				/*// I don't think it is necessary to show an alert dialog every few seconds if there are no pending orders.  
@@ -286,6 +306,8 @@ public class Order {
 		String Items = "";
 		String Status = "";
 		double Total = 0.0;
+		double Deposit = 0.0;
+
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
@@ -296,7 +318,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 				if(OrderVector.size() == 0) {
@@ -324,6 +347,8 @@ public class Order {
 		String Items = "";
 		String Status = "";
 		double Total = 0.0;
+		double Deposit = 0.0;
+
 		if(state != null){
 			try {
 				ResultSet rs = state.executeQuery(commandstring);
@@ -334,7 +359,8 @@ public class Order {
 					Items = rs.getString("Items");
 					Status = rs.getString("Status");
 					Total = rs.getDouble("Total");
-					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total);
+					Deposit = rs.getDouble("Deposit");
+					Order new_order = new Order(ID, E_PIN, Table_No, Items, Status, Total, Deposit);
 					OrderVector.add(new_order);
 				}
 				if(OrderVector.size() == 0) {

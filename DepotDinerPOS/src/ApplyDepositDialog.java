@@ -38,7 +38,7 @@ public class ApplyDepositDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public ApplyDepositDialog() {
+	public ApplyDepositDialog( final Order curOrder ) {
 		setTitle("Reservations");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setResizable(false);
@@ -51,13 +51,11 @@ public class ApplyDepositDialog extends JDialog {
 		btnSelect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				// TODO: Get row selection, determine deposit amount
-				// 		 Query DB to remove this reservation
-				//deposit = 
-				
 				Reservation selection = reservations.get( table.getSelectedRow() );
 				
 				deposit = selection.getDeposit();
+				
+				curOrder.setDeposit( deposit );
 				
 				String name = selection.getName();
 				int size = selection.getSize();

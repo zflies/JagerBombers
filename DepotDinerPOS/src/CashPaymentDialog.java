@@ -136,8 +136,7 @@ public class CashPaymentDialog extends JDialog {
 					System.err.println("Statement was null.  No connection?");
 				
 				curOrder.setStatus( Order.Status.Paid );
-				curOrder.setTotal( curOrder.getTotal() * taxRate );
-				
+				curOrder.setTotal( curOrder.getTotal() * taxRate );				
 				
 				dispose();
 			}

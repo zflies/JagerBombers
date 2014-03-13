@@ -43,6 +43,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 	private JDialog dialogCreditPayment;
 	private JDialog dialogGiftPayment;
 	private ApplyDepositDialog depositDialog;
+	private JButton btnSplitTicket;
 	
 	private static Vector<Vector<String>> EmployeeViewOrderTableData = new Vector<Vector<String>>();
 	private static ArrayList<Double> ItemCosts = new ArrayList<Double>();	//< Used to keep track of item prices for split ticket usage
@@ -183,7 +184,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			}
 		});
 		btnGiftCard.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
-		final JButton btnSplitTicket = new JButton("SPLIT TICKET");
+		btnSplitTicket = new JButton("SPLIT TICKET");
 		btnSplitTicket.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -200,6 +201,12 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 			}
 		});
 		btnSplitTicket.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		
+		if ( curOrder.getDeposit() > 0 )
+		{
+			btnSplitTicket.setEnabled( false );
+			btnSplitTicket.setToolTipText("Reservation Deposit Applied.  Cannot Split Ticket.");
+		}
 		
 		JButton btnPrint = new JButton("PRINT RECEIPT");
 		btnPrint.addActionListener(new ActionListener() {
@@ -221,7 +228,7 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		btnDeposit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				depositDialog = new ApplyDepositDialog();
+				depositDialog = new ApplyDepositDialog( curOrder );
 				depositDialog.setVisible(true);
 				depositDialog.setLocationRelativeTo(null);
 				depositDialog.setAlwaysOnTop(true);	
@@ -396,6 +403,12 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		
 		double deposit = depositDialog.getDeposit();
 		
+		if ( deposit > 0 )
+		{
+			btnSplitTicket.setEnabled( false );
+			btnSplitTicket.setToolTipText("Reservation Deposit Applied.  Cannot Split Ticket.");
+		}
+		
 		double newTotal = curOrder.getTotal() - deposit;				
 		
 		if ( newTotal < 0.00 )
@@ -432,6 +445,11 @@ public class PaymentsDialog extends JDialog implements WindowFocusListener{
 		if ( depositDialog != null )
 		{
 			getDepositInfo();
+		}
+		else if ( curOrder.getDeposit() > 0 )
+		{
+				btnSplitTicket.setEnabled( false );
+				btnSplitTicket.setToolTipText("Reservation Deposit Applied.  Cannot Split Ticket.");
 		}
 		
 		if ( curOrder.getStatus() == Order.Status.Paid )

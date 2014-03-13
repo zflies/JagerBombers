@@ -209,8 +209,7 @@ public class AddReservationDialog extends JDialog {
 						try {
 							checkFields();
 						} catch (Exception e1) {
-							System.err.println("Error: AddReservationDialog OK button Action Listener");
-							return;
+							JOptionPane.showMessageDialog(contentPanel, e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);							return;
 						}
 						//add new reservation to DB
 						String name = textFieldName.getText();
